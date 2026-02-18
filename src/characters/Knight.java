@@ -9,7 +9,6 @@ public class Knight extends Character {
 
     private boolean attacking = false;
     private boolean usingSkill = false;
-    
     private boolean hasDealtDamage = false;
 
     private long attackStart;
@@ -28,28 +27,24 @@ public class Knight extends Character {
     }
 
     public void attack() {
-    if (!usingSkill) {
-        attacking = true;
-        hasDealtDamage = false;  // รีเซ็ตตรงนี้
-        attackStart = System.currentTimeMillis();
+        if (!usingSkill) {
+            attacking = true;
+            hasDealtDamage = false;  // รีเซ็ตตอนเริ่มโจมตี
+            attackStart = System.currentTimeMillis();
+        }
     }
-}
-
 
     public void useSkill() {
-    long now = System.currentTimeMillis();
-    if (!attacking && !usingSkill &&
-            now - lastSkillTime >= skillCooldown) {
+        long now = System.currentTimeMillis();
+        if (!attacking && !usingSkill &&
+                now - lastSkillTime >= skillCooldown) {
 
-        usingSkill = true;
-        hasDealtDamage = false;  // รีเซ็ตตรงนี้
-        skillStart = now;
-        lastSkillTime = now;
+            usingSkill = true;
+            hasDealtDamage = false;  // รีเซ็ตตอนเริ่มสกิล
+            skillStart = now;
+            lastSkillTime = now;
+        }
     }
-}
-
-
-
 
     public void update() {
         long now = System.currentTimeMillis();
@@ -74,6 +69,7 @@ public class Knight extends Character {
             g2.setColor(new Color(255, 0, 0, 120));
 
             int startAngle = (facing == 1) ? -90 : 90;
+
             g2.fillArc(
                     (int)(x - attackRange/2 + 20),
                     (int)(y - attackRange/2 + 20),
@@ -84,9 +80,10 @@ public class Knight extends Character {
             );
         }
 
-        // สกิล 360
+        // สกิล 360 องศา
         if (usingSkill) {
             g2.setColor(new Color(0, 255, 255, 120));
+
             g2.fillOval(
                     (int)(x - skillRange/2 + 20),
                     (int)(y - skillRange/2 + 20),
@@ -94,5 +91,33 @@ public class Knight extends Character {
                     (int)skillRange
             );
         }
+    }
+
+    // ======================
+    // Getter ที่ GamePanel ใช้
+    // ======================
+
+    public boolean isAttacking() {
+        return attacking;
+    }
+
+    public boolean isUsingSkill() {
+        return usingSkill;
+    }
+
+    public boolean hasDealtDamage() {
+        return hasDealtDamage;
+    }
+
+    public void setHasDealtDamage(boolean value) {
+        hasDealtDamage = value;
+    }
+
+    public float getAttackRange() {
+        return attackRange;
+    }
+
+    public float getSkillRange() {
+        return skillRange;
     }
 }
