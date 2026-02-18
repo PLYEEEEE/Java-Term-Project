@@ -1,11 +1,10 @@
 /**
  * Concrete class for slime monsters.
- * Provides core functionality for HP, damage, movement, and leveling.
+ * Provides core functionality for HP, damage, movement.
  * 
- * Stats scale infinitely with level and wave number:
+ * Stats scale infinitely with wave number:
  * - HP increases by 10% per wave
- * - Damage increases by 8% per wave  
- * - Stats increase by 5% per level
+ * - Damage increases by 8% per wave
  */
 public class Slime {
     
@@ -13,26 +12,22 @@ public class Slime {
     private static final float BASE_HP = 100f;
     private static final float BASE_ATTACK = 15f;
     private static final float BASE_MOVE_SPEED = 80f;
-    private static final int BASE_EXP_REWARD = 10;
+    // EXP removed
     
     // ===== Scaling Constants =====
     private static final float WAVE_HP_SCALE = 0.10f;    // 10% per wave
     private static final float WAVE_DMG_SCALE = 0.08f;   // 8% per wave
-    private static final float LEVEL_SCALE = 0.05f;      // 5% per level
+    // LEVEL_SCALE removed
     
     // ===== Protected Fields =====
-    protected int level;
     protected float maxHP;
     protected float currentHP;
     protected float attackDamage;
     protected float moveSpeed;
     protected float attackRange;
-    protected int expReward;
     protected float positionX;
     protected float positionY;
     protected boolean isDead;
-    protected SlimeSize size;
-    protected SlimeType type;
     
     // Current wave number (for stat scaling)
     protected int currentWave;
@@ -40,27 +35,15 @@ public class Slime {
     // ===== Constructor =====
     
     /**
-     * Creates a new slime with the specified level.
-     * Uses default medium size and melee type.
-     * 
-     * @param level The level of the slime (minimum 1)
+     * Creates a new slime. Uses default medium size and melee type.
      */
-    public Slime(int level) {
-        this.level = Math.max(1, level);
-        this.size = SlimeSize.MEDIUM;
-        this.type = SlimeType.MELEE;
+    public Slime() {
         this.currentWave = 1;
         this.positionX = 0f;
         this.positionY = 0f;
         this.isDead = false;
-        
-        // Calculate base stats
         calculateBaseStats();
-        
-        // Apply initial wave/level scaling
         applyScaling();
-        
-        // Set current HP to max
         this.currentHP = this.maxHP;
     }
     
@@ -78,20 +61,16 @@ public class Slime {
     // ===== Stat Scaling =====
     
     /**
-     * Applies wave and level multipliers to stats.
+     * Applies wave multipliers to stats.
      * Called automatically on construction and when wave changes.
      */
     private void applyScaling() {
         float waveHPFactor = 1f + (currentWave - 1) * WAVE_HP_SCALE;
         float waveDmgFactor = 1f + (currentWave - 1) * WAVE_DMG_SCALE;
-        float levelFactor = 1f + (level - 1) * LEVEL_SCALE;
-        
-        // Apply size multipliers
-        maxHP = BASE_HP * size.getHPMultiplier() * waveHPFactor * levelFactor;
-        attackDamage = BASE_ATTACK * size.getDamageMultiplier() * waveDmgFactor * levelFactor;
-        moveSpeed = BASE_MOVE_SPEED * size.getSpeedMultiplier();
-        attackRange = type.getBaseAttackRange();
-        expReward = (int)(BASE_EXP_REWARD * levelFactor * waveHPFactor);
+        maxHP = BASE_HP * waveHPFactor;
+        attackDamage = BASE_ATTACK * waveDmgFactor;
+        moveSpeed = BASE_MOVE_SPEED;
+        attackRange = 50f * 0.5f; // Default attack range for standard slime
     }
     
     /**
@@ -186,9 +165,6 @@ public class Slime {
         return isDead;
     }
     
-    public int getLevel() {
-        return level;
-    }
     
     public float getCurrentHP() {
         return currentHP;
@@ -208,18 +184,6 @@ public class Slime {
     
     public float getAttackRange() {
         return attackRange;
-    }
-    
-    public int getExpReward() {
-        return expReward;
-    }
-    
-    public SlimeSize getSize() {
-        return size;
-    }
-    
-    public SlimeType getType() {
-        return type;
     }
     
     public float getPositionX() {
@@ -247,8 +211,8 @@ public class Slime {
     
     @Override
     public String toString() {
-        return String.format("%s[Lv%d Wave%d | HP:%.0f/%.0f ATK:%.1f SPD:%.1f EXP:%d]",
-            getClass().getSimpleName(), level, currentWave,
-            currentHP, maxHP, attackDamage, moveSpeed, expReward);
+        return String.format("%s[Wave%d | HP:%.0f/%.0f ATK:%.1f SPD:%.1f]",
+            getClass().getSimpleName(), currentWave,
+            currentHP, maxHP, attackDamage, moveSpeed);
     }
 }

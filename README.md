@@ -25,4 +25,8 @@ javac -d ../bin *.java
 java -cp ../bin SlimeGUI
 ```
 
-The GUI provides interactive controls to test slime functionality including attacking, taking damage, and wave progression.
+The GUI provides interactive controls and visual representation to test slime functionality including:
+
+- Visual slime character with movement, attack effects, and death animation
+- Real-time HP bar display  
+- Interactive controls for attacking, taking damage, wave progression, and movement
