@@ -4,11 +4,13 @@ import java.awt.*;
 
 public class Knight extends Character {
 
-    private float attackRange = 150;
-    private float skillRange = 300;
+    private float attackRange = 100;
+    private float skillRange = 180;
 
     private boolean attacking = false;
     private boolean usingSkill = false;
+    
+    private boolean hasDealtDamage = false;
 
     private long attackStart;
     private long skillStart;
@@ -26,22 +28,28 @@ public class Knight extends Character {
     }
 
     public void attack() {
-        if (!usingSkill) {
-            attacking = true;
-            attackStart = System.currentTimeMillis();
-        }
+    if (!usingSkill) {
+        attacking = true;
+        hasDealtDamage = false;  // รีเซ็ตตรงนี้
+        attackStart = System.currentTimeMillis();
     }
+}
+
 
     public void useSkill() {
-        long now = System.currentTimeMillis();
-        if (!attacking && !usingSkill &&
-                now - lastSkillTime >= skillCooldown) {
+    long now = System.currentTimeMillis();
+    if (!attacking && !usingSkill &&
+            now - lastSkillTime >= skillCooldown) {
 
-            usingSkill = true;
-            skillStart = now;
-            lastSkillTime = now;
-        }
+        usingSkill = true;
+        hasDealtDamage = false;  // รีเซ็ตตรงนี้
+        skillStart = now;
+        lastSkillTime = now;
     }
+}
+
+
+
 
     public void update() {
         long now = System.currentTimeMillis();
