@@ -1,12 +1,16 @@
+package main;
 
 import javax.swing.*;
+
+import characters.Knight;
+import characters.Slime;
+
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 
 public class GamePanel extends JPanel {
 
@@ -33,7 +37,9 @@ public class GamePanel extends JPanel {
             do {
                 sx = rand.nextInt(700) + 50;
                 sy = rand.nextInt(500) + 50;
-            } while (Math.abs(sx - knight.x) < 60 && Math.abs(sy - knight.y) < 60);
+            } while (Math.abs(sx - knight.getX()) < 60 &&
+                    Math.abs(sy - knight.getY()) < 60);
+
             s.setPosition(sx, sy);
             slimes.add(s);
         }
@@ -58,9 +64,9 @@ public class GamePanel extends JPanel {
                         // โจมตี: ลดเลือด slime 1 หน่วยถ้าอยู่ในพื้นที่โจมตี (รัศมี 150)
                         for (Slime s : slimes) {
                             if (!s.isDead()) {
-                                float dx = (s.getPositionX() + 20) - (knight.x + 20);
-                                float dy = (s.getPositionY() + 20) - (knight.y + 20);
-                                float dist = (float)Math.sqrt(dx * dx + dy * dy);
+                                float dx = (s.getPositionX() + 20) - (knight.getX() + 20);
+                                float dy = (s.getPositionY() + 20) - (knight.getY() + 20);
+                                float dist = (float) Math.sqrt(dx * dx + dy * dy);
                                 if (dist <= 150) {
                                     s.takeDamage(1f);
                                 }
@@ -72,9 +78,9 @@ public class GamePanel extends JPanel {
                         // ใช้สกิล: ลดเลือด slime 2 หน่วยถ้าอยู่ในพื้นที่สกิล (รัศมี 300)
                         for (Slime s : slimes) {
                             if (!s.isDead()) {
-                                float dx = (s.getPositionX() + 20) - (knight.x + 20);
-                                float dy = (s.getPositionY() + 20) - (knight.y + 20);
-                                float dist = (float)Math.sqrt(dx * dx + dy * dy);
+                                float dx = (s.getPositionX() + 20) - (knight.getX() + 20);
+                                float dy = (s.getPositionY() + 20) - (knight.getY() + 20);
+                                float dist = (float) Math.sqrt(dx * dx + dy * dy);
                                 if (dist <= 300) {
                                     s.takeDamage(2f);
                                 }
@@ -102,27 +108,31 @@ public class GamePanel extends JPanel {
         timer.start();
     }
 
-
     private void update() {
         float dx = 0, dy = 0;
-        if (up) dy -= 1;
-        if (down) dy += 1;
-        if (left) dx -= 1;
-        if (right) dx += 1;
+        if (up)
+            dy -= 1;
+        if (down)
+            dy += 1;
+        if (left)
+            dx -= 1;
+        if (right)
+            dx += 1;
 
         knight.move(dx, dy);
         knight.update();
 
         // ให้ทุก slime วิ่งเข้าหา knight และไม่ซ้อน
         for (Slime s : slimes) {
-            if (s.isDead()) continue;
+            if (s.isDead())
+                continue;
             float slimeX = s.getPositionX() + 20;
             float slimeY = s.getPositionY() + 20;
-            float knightX = knight.x + 20;
-            float knightY = knight.y + 20;
+            float knightX = knight.getX() + 20;
+            float knightY = knight.getY() + 20;
             float vx = knightX - slimeX;
             float vy = knightY - slimeY;
-            float dist = (float)Math.sqrt(vx * vx + vy * vy);
+            float dist = (float) Math.sqrt(vx * vx + vy * vy);
             float minDist = 40f;
             if (dist > minDist) {
                 float speed = s.getMoveSpeed() / 60f;

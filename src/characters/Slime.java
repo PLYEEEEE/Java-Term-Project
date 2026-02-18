@@ -1,3 +1,4 @@
+package characters;
 /**
  * Concrete class for slime monsters.
  * Provides core functionality for HP, damage, movement.

@@ -1,3 +1,5 @@
+package characters;
+
 import java.awt.*;
 
 public class Knight extends Character {

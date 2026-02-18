@@ -1,3 +1,5 @@
+package characters;
+
 
 
 public abstract class Character {
@@ -16,6 +18,14 @@ public abstract class Character {
         this.x = x;
         this.y = y;
         this.speed = speed;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
     }
 
     public void move(float dx, float dy) {
