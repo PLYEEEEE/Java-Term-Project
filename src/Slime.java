@@ -1,5 +1,5 @@
 /**
- * Abstract base class for all slime monsters.
+ * Concrete class for slime monsters.
  * Provides core functionality for HP, damage, movement, and leveling.
  * 
  * Stats scale infinitely with level and wave number:
@@ -7,7 +7,7 @@
  * - Damage increases by 8% per wave  
  * - Stats increase by 5% per level
  */
-public abstract class Slime {
+public class Slime {
     
     // ===== Base Stats (before multipliers) =====
     private static final float BASE_HP = 100f;
@@ -40,22 +40,21 @@ public abstract class Slime {
     // ===== Constructor =====
     
     /**
-     * Creates a new slime with the specified level, size, and type.
+     * Creates a new slime with the specified level.
+     * Uses default medium size and melee type.
      * 
      * @param level The level of the slime (minimum 1)
-     * @param size The size category
-     * @param type The attack type
      */
-    protected Slime(int level, SlimeSize size, SlimeType type) {
+    public Slime(int level) {
         this.level = Math.max(1, level);
-        this.size = size;
-        this.type = type;
+        this.size = SlimeSize.MEDIUM;
+        this.type = SlimeType.MELEE;
         this.currentWave = 1;
         this.positionX = 0f;
         this.positionY = 0f;
         this.isDead = false;
         
-        // Let subclass calculate specific stats
+        // Calculate base stats
         calculateBaseStats();
         
         // Apply initial wave/level scaling
@@ -65,13 +64,16 @@ public abstract class Slime {
         this.currentHP = this.maxHP;
     }
     
-    // ===== Abstract Method =====
+    // ===== Base Stats Calculation =====
     
     /**
-     * Subclasses must implement this to set their base stats
-     * before size multipliers and scaling are applied.
+     * Calculates base stats before size multipliers and scaling.
+     * For standard slime, no special calculations needed.
      */
-    protected abstract void calculateBaseStats();
+    protected void calculateBaseStats() {
+        // Base stats are already defined as constants
+        // No special calculations needed for standard slime
+    }
     
     // ===== Stat Scaling =====
     
