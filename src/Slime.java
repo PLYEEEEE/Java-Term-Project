@@ -6,10 +6,38 @@
  * - HP increases by 10% per wave
  * - Damage increases by 8% per wave
  */
+import java.awt.*;
+
 public class Slime {
+        // ...existing code...
+
+        /**
+         * วาด Slime ลงบนหน้าจอ
+         */
+        public void draw(Graphics2D g2) {
+            if (isDead) return;
+            g2.setColor(new Color(0, 200, 0));
+            g2.fillOval((int)positionX, (int)positionY, 40, 40);
+
+            // วาดขอบ
+            g2.setColor(Color.BLACK);
+            g2.drawOval((int)positionX, (int)positionY, 40, 40);
+
+            // วาด HP bar
+            int barWidth = 40, barHeight = 6;
+            int hpBarX = (int)positionX;
+            int hpBarY = (int)positionY - 10;
+            float hpPercent = Math.max(0, Math.min(1, currentHP / maxHP));
+            g2.setColor(Color.RED);
+            g2.fillRect(hpBarX, hpBarY, barWidth, barHeight);
+            g2.setColor(Color.GREEN);
+            g2.fillRect(hpBarX, hpBarY, (int)(barWidth * hpPercent), barHeight);
+            g2.setColor(Color.BLACK);
+            g2.drawRect(hpBarX, hpBarY, barWidth, barHeight);
+        }
     
     // ===== Base Stats (before multipliers) =====
-    private static final float BASE_HP = 100f;
+    private static final float BASE_HP = 3f;
     private static final float BASE_ATTACK = 15f;
     private static final float BASE_MOVE_SPEED = 80f;
     // EXP removed

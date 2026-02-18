@@ -1,11 +1,17 @@
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 
 public class GamePanel extends JPanel {
 
     private Knight knight;
+    private List<Slime> slimes;
 
     private boolean up, down, left, right;
 
@@ -15,6 +21,22 @@ public class GamePanel extends JPanel {
         setFocusable(true);
 
         knight = new Knight("Knight", 350, 250);
+
+        // สุ่มจำนวน slime 3-7 ตัว
+        slimes = new ArrayList<>();
+        Random rand = new Random();
+        int slimeCount = 3 + rand.nextInt(5); // 3-7 ตัว
+        for (int i = 0; i < slimeCount; i++) {
+            Slime s = new Slime();
+            // สุ่มตำแหน่ง ไม่ให้ซ้อนกับ Knight
+            float sx, sy;
+            do {
+                sx = rand.nextInt(700) + 50;
+                sy = rand.nextInt(500) + 50;
+            } while (Math.abs(sx - knight.x) < 60 && Math.abs(sy - knight.y) < 60);
+            s.setPosition(sx, sy);
+            slimes.add(s);
+        }
 
         addKeyListener(new KeyAdapter() {
             @Override
@@ -31,8 +53,34 @@ public class GamePanel extends JPanel {
                         right = true;
                         knight.setFacing(1);
                     }
-                    case KeyEvent.VK_SPACE -> knight.attack();
-                    case KeyEvent.VK_Q -> knight.useSkill();
+                    case KeyEvent.VK_SPACE -> {
+                        knight.attack();
+                        // โจมตี: ลดเลือด slime 1 หน่วยถ้าอยู่ในพื้นที่โจมตี (รัศมี 150)
+                        for (Slime s : slimes) {
+                            if (!s.isDead()) {
+                                float dx = (s.getPositionX() + 20) - (knight.x + 20);
+                                float dy = (s.getPositionY() + 20) - (knight.y + 20);
+                                float dist = (float)Math.sqrt(dx * dx + dy * dy);
+                                if (dist <= 150) {
+                                    s.takeDamage(1f);
+                                }
+                            }
+                        }
+                    }
+                    case KeyEvent.VK_Q -> {
+                        knight.useSkill();
+                        // ใช้สกิล: ลดเลือด slime 2 หน่วยถ้าอยู่ในพื้นที่สกิล (รัศมี 300)
+                        for (Slime s : slimes) {
+                            if (!s.isDead()) {
+                                float dx = (s.getPositionX() + 20) - (knight.x + 20);
+                                float dy = (s.getPositionY() + 20) - (knight.y + 20);
+                                float dist = (float)Math.sqrt(dx * dx + dy * dy);
+                                if (dist <= 300) {
+                                    s.takeDamage(2f);
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -54,10 +102,9 @@ public class GamePanel extends JPanel {
         timer.start();
     }
 
+
     private void update() {
-
         float dx = 0, dy = 0;
-
         if (up) dy -= 1;
         if (down) dy += 1;
         if (left) dx -= 1;
@@ -65,11 +112,34 @@ public class GamePanel extends JPanel {
 
         knight.move(dx, dy);
         knight.update();
+
+        // ให้ทุก slime วิ่งเข้าหา knight และไม่ซ้อน
+        for (Slime s : slimes) {
+            if (s.isDead()) continue;
+            float slimeX = s.getPositionX() + 20;
+            float slimeY = s.getPositionY() + 20;
+            float knightX = knight.x + 20;
+            float knightY = knight.y + 20;
+            float vx = knightX - slimeX;
+            float vy = knightY - slimeY;
+            float dist = (float)Math.sqrt(vx * vx + vy * vy);
+            float minDist = 40f;
+            if (dist > minDist) {
+                float speed = s.getMoveSpeed() / 60f;
+                float mx = vx / dist * speed;
+                float my = vy / dist * speed;
+                s.move(mx, my);
+            }
+        }
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        knight.draw((Graphics2D) g);
+        Graphics2D g2 = (Graphics2D) g;
+        for (Slime s : slimes) {
+            s.draw(g2);
+        }
+        knight.draw(g2);
     }
 }
