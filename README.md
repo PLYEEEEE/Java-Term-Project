@@ -1,18 +1,28 @@
-## Getting Started
+# Slime Monster System
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+A Java project demonstrating an RPG slime monster system with stat scaling and combat mechanics.
 
-## Folder Structure
+## Features
 
-The workspace contains two folders by default, where:
+- Slime with scalable stats (HP, damage, speed)
+- Wave-based difficulty scaling
+- Level progression
+- Combat system (attack, damage, death)
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+## Running the Application
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+### Console Demo
+```bash
+cd src
+javac -d ../bin *.java
+java -cp ../bin SlimeDemo
+```
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+### GUI Tester
+```bash
+cd src
+javac -d ../bin *.java
+java -cp ../bin SlimeGUI
+```
 
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+The GUI provides interactive controls to test slime functionality including attacking, taking damage, and wave progression.
