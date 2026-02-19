@@ -10,6 +10,7 @@ public abstract class Character {
     protected float x, y;
     protected float speed;
     protected boolean isAlive = true;
+    protected int size = 50;
 
     public Character(String name, int hearts, float x, float y, float speed) {
         this.name = name;
@@ -28,10 +29,23 @@ public abstract class Character {
         return y;
     }
 
-    public void move(float dx, float dy) {
-        x += dx * speed;
-        y += dy * speed;
+    public void setX(float x) {
+        this.x = x;
+       
     }
+    public void setY(float y) {
+        this.y = y;
+        
+    }
+
+    public float getSpeed() {
+        return speed;
+    }   
+
+    public int getsize() {
+        return size;
+    }   
+
 
     public void takeDamage(int amount) {
         currentHearts -= amount;

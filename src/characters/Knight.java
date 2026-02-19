@@ -59,7 +59,7 @@ public class Knight extends Character {
 
         // ตัวละคร
         g2.setColor(Color.BLUE);
-        g2.fillOval((int)x, (int)y, 40, 40);
+        g2.fillOval((int)x, (int)y, getsize(), getsize());
 
         // โจมตีครึ่งวงกลม
         if (attacking) {
@@ -67,8 +67,8 @@ public class Knight extends Character {
 
             int startAngle = (facing == 1) ? -90 : 90;
             g2.fillArc(
-                    (int)(x - attackRange/2 + 20),
-                    (int)(y - attackRange/2 + 20),
+                    (int)(x - attackRange/2 + size/2),
+                    (int)(y - attackRange/2 + size/2),
                     (int)attackRange,
                     (int)attackRange,
                     startAngle,
@@ -80,11 +80,12 @@ public class Knight extends Character {
         if (usingSkill) {
             g2.setColor(new Color(0, 255, 255, 120));
             g2.fillOval(
-                    (int)(x - skillRange/2 + 20),
-                    (int)(y - skillRange/2 + 20),
+                    (int)(x - skillRange/2 + size/2),
+                    (int)(y - skillRange/2 + size/2),
                     (int)skillRange,
                     (int)skillRange
             );
         }
     }
+
 }

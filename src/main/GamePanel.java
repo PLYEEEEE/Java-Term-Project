@@ -124,17 +124,30 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     private void update() {
-        float dx = 0, dy = 0;
-        if (up)
-            dy -= 1;
-        if (down)
-            dy += 1;
-        if (left)
-            dx -= 1;
-        if (right)
-            dx += 1;
+        float nextX = knight.getX();
+        float nextY = knight.getY();
 
-        knight.move(dx, dy);
+        if (up) {
+            nextY -= knight.getSpeed();
+        }
+        if (down) {
+            nextY += knight.getSpeed();
+        }
+        if (left) {
+            nextX -= knight.getSpeed();
+        }
+        if (right) {
+            nextX += knight.getSpeed();
+        }
+
+        // ตรวจสอบการชนขอบหน้าจอ
+        if (nextX > 0 && nextX < getWidth() - knight.getsize()) {
+            knight.setX(nextX);
+        }
+        if (nextY > 0 && nextY < getHeight() - knight.getsize()) {
+            knight.setY(nextY); 
+            
+        }
         knight.update();
 
         // ให้ทุก slime วิ่งเข้าหา knight และไม่ซ้อน
