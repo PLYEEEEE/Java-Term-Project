@@ -4,16 +4,18 @@ import java.io.File;
 import javax.swing.*;
 import java.awt.*;
 
-
-public class SmartButton extends JButton {
+public class SmartBox extends JLabel {
     private String currentImagePath;
+    
+    public String getCurrentImagePath() {
+        return currentImagePath;
+    }
 
-    public SmartButton(String text, String imgPath, int x, int y, int w, int h) {
-        super(text);
+    public SmartBox(String text, String imgPath, int x, int y, int w, int h, int fontSize) {
+        super(text, SwingConstants.CENTER);
         this.currentImagePath = imgPath;
         this.setBounds(x, y, w, h);
-        this.setFont(new Font("Arial", Font.BOLD, 25));
-        this.setFocusPainted(false);
+        this.setFont(new Font("Arial", Font.PLAIN, fontSize));
         updateAppearance(w, h);
     }
 
@@ -23,13 +25,9 @@ public class SmartButton extends JButton {
             Image img = icon.getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH);
             this.setIcon(new ImageIcon(img));
             this.setText(""); 
-            this.setContentAreaFilled(false); 
-            this.setBorderPainted(false);
         } else {
-            this.setBackground(new Color(255, 60, 60));
+            this.setBackground(new Color(170, 170, 170));
             this.setOpaque(true);
-            this.setBorderPainted(true);
-            this.setContentAreaFilled(true);
         }
     }
 }

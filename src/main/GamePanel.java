@@ -1,10 +1,7 @@
 package main;
-
 import javax.swing.*;
-
 import characters.Knight;
 import characters.Slime;
-
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -12,15 +9,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class GamePanel extends JPanel {
 
+public class GamePanel extends JPanel implements Runnable {
+    private Thread gameThread;
+    private boolean isRunning = false;
     private Knight knight;
     private List<Slime> slimes;
 
     private boolean up, down, left, right;
 
     public GamePanel() {
-        setPreferredSize(new Dimension(800, 600));
+        setPreferredSize(new Dimension(1280, 720));
         setBackground(Color.BLACK);
         setFocusable(true);
 
@@ -101,11 +100,27 @@ public class GamePanel extends JPanel {
             }
         });
 
-        Timer timer = new Timer(16, e -> {
+    }
+
+    public void startGame() {
+        if (gameThread == null) {
+            gameThread = new Thread(this);
+            isRunning = true;
+            gameThread.start();
+        }
+    }
+
+    @Override
+    public void run() {
+        while (isRunning) {
             update();
             repaint();
-        });
-        timer.start();
+            try {
+                Thread.sleep(16); // ~60 FPS
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void update() {
