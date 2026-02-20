@@ -25,6 +25,7 @@ public class GamePanel extends JPanel implements Runnable {
     private int tileSizeX = sizeX / col;
     private int tileSizeY = sizeY / row;
     private TileManager tileManager;
+    private boolean isGameOver = false;
 
 
     public GamePanel() {
@@ -139,7 +140,35 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
 
+    private void checkCollisions() {
+        long now = System.currentTimeMillis();
+        for (Slime s : slimes) {
+            if (!s.isDead()) {
+                float dx = (s.getPositionX() + s.getSizeX() / 2) - (knight.getX() + knight.getSizeX() / 2);
+                float dy = (s.getPositionY() + s.getSizeY() / 2) - (knight.getY() + knight.getSizeY() / 2);
+                float dist = (float) Math.sqrt(dx * dx + dy * dy);
+                float collisionDistance = (s.getSizeX() + knight.getSizeX()) / 2;
+
+                if (dist <= collisionDistance) {
+                    if (now - s.getLastDamageTime() >= 5000) {
+                        knight.takeDamage(2);
+                        s.setLastDamageTime(now);
+                    }
+                }
+            }
+        }
+    }
+
+    private void checkGameOver() {
+        if (knight.getHealth() <= 0 && !isGameOver) {
+            isGameOver = true;
+            isRunning = false;
+            repaint();
+        }
+    }
+
     private void update() {
+        if (isGameOver) return;
         float nextX = knight.getX();
         float nextY = knight.getY();
 
@@ -162,6 +191,10 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
         knight.update();
+
+        checkCollisions();
+
+        checkGameOver();
 
         // ให้ทุก slime วิ่งเข้าหา knight และไม่ซ้อน
         for (Slime s : slimes) {
@@ -195,8 +228,18 @@ public class GamePanel extends JPanel implements Runnable {
             s.draw(g2);
         }
         
-        knight.draw(g2);
-
+        if (!isGameOver && knight.getHealth() > 0) {
+            knight.draw(g2);
+        }
+        if (isGameOver) {
+            g2.setColor(new Color(0,0,0,180));
+            g2.fillRect(0, 0, getWidth(), getHeight());
+            g2.setColor(Color.RED);
+            g2.setFont(new Font("Arial", Font.BOLD, 80));
+            String msg = "GAME OVER";
+            int msgWidth = g2.getFontMetrics().stringWidth(msg);
+            g2.drawString(msg, (getWidth() - msgWidth) / 2, getHeight() / 2);
+        }
     }
 
     public float gettileSizeX() {

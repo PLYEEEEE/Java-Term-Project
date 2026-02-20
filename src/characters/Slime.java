@@ -254,4 +254,12 @@ public class Slime {
             getClass().getSimpleName(), currentWave,
             currentHP, maxHP, attackDamage, moveSpeed);
     }
+
+    private long lastDamageTime = 0;
+    public long getLastDamageTime() {
+        return lastDamageTime;
+    }
+    public void setLastDamageTime(long t) {
+        lastDamageTime = t;
+    }
 }

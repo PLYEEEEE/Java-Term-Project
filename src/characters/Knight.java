@@ -4,6 +4,17 @@ import java.awt.*;
 
 public class Knight extends Character {
 
+    private int health = 10;
+    private final int maxHealth = 10;
+
+    public int getHealth() {
+        return health;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
     private float attackRange = 150;
     private float skillRange = 300;
 
@@ -17,7 +28,7 @@ public class Knight extends Character {
 
     private int facing = 1; // 1 = right, -1 = left
 
-    public Knight(String name, float x, float y,int sizex, int sizey) {
+    public Knight(String name, float x, float y, int sizex, int sizey) {
         super(name, 5, x, y, 3.0f, sizex, sizey);
     }
 
@@ -93,6 +104,23 @@ public class Knight extends Character {
                     (int)skillRange
             );
         }
+
+        // บาร์สุขภาพ
+        g2.setColor(Color.RED);
+        int barWidth = (int)getSizeX();
+        int barHeight = 8;
+        int barX = (int)x;
+        int barY = (int)y - barHeight - 5;
+        float healthPercent = (float)health / maxHealth;
+        g2.drawRect(barX, barY, barWidth, barHeight);
+        g2.setColor(Color.GREEN);
+        g2.fillRect(barX + 1, barY + 1, (int)((barWidth - 1) * healthPercent), barHeight - 1);
     }
 
+    public void takeDamage(int damage) {
+        this.health -= damage;
+        if (this.health < 0) {
+            this.health = 0;
+        }
+    }
 }
