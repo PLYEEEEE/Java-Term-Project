@@ -14,7 +14,7 @@ public class TileManager {
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
-        tile = new Tile[10];
+        tile = new Tile[20];
         mapTileNum = new int[gp.getCol()][gp.getRow()];
         getTileImage();
         loadMap("src/map/map.txt");
@@ -26,17 +26,29 @@ public class TileManager {
             tile[0] = new Tile();
             tile[0].image = ImageIO.read(getClass().getResourceAsStream("/Image/Terrain/Grass/Grass1.png"));
 
+            tile[8] = new Tile();
+            tile[8].image = ImageIO.read(getClass().getResourceAsStream("/Image/Terrain/Grass/Grass2.png"));
+
+            tile[9] = new Tile();
+            tile[9].image = ImageIO.read(getClass().getResourceAsStream("/Image/Terrain/Grass/GrassPath1.png"));
+
             tile[1] = new Tile();
             tile[1].image = ImageIO.read(getClass().getResourceAsStream("/Image/Environment/Tree/Tree1.png"));
             tile[1].collision = true;
+            tile[1].widthScale = 2;
+            tile[1].heightScale = 2;
 
             tile[2] = new Tile();
             tile[2].image = ImageIO.read(getClass().getResourceAsStream("/Image/Environment/Tree/Tree2.png"));
             tile[2].collision = true;
+            tile[2].widthScale = 2;
+            tile[2].heightScale = 2;
             
             tile[3] = new Tile();
             tile[3].image = ImageIO.read(getClass().getResourceAsStream("/Image/Environment/Tree/Tree3.png"));
             tile[3].collision = true;
+            tile[3].widthScale = 2;
+            tile[3].heightScale = 2;
 
             tile[4] = new Tile();
             tile[4].image = ImageIO.read(getClass().getResourceAsStream("/Image/Environment/Bush/Bush1.png"));
@@ -80,20 +92,64 @@ public class TileManager {
     }
 
     public void draw(java.awt.Graphics2D g2) {
-        int col = 0;
-        int row = 0;
-        while (col < gp.getCol() && row < gp.getRow()) {
+
+        for(int row = 0; row < gp.getRow(); row++){
+        for(int col = 0; col < gp.getCol(); col++){
+
             int tileNum = mapTileNum[col][row];
-            if (tileNum > 0 ) {
-              g2.drawImage(tile[0].image, (int)(col * gp.gettileSizeX()), (int)(row * gp.gettileSizeY()), (int)gp.gettileSizeX(), (int)gp.gettileSizeY(), null);
-            }
-            
-            g2.drawImage(tile[tileNum].image, (int)(col * gp.gettileSizeX()), (int)(row * gp.gettileSizeY()), (int)gp.gettileSizeX(), (int)gp.gettileSizeY(), null);
-            col++;
-            if (col == gp.getCol()) {
-                col = 0;
-                row++;
+            int x = (int)(col * gp.gettileSizeX());
+            int y = (int)(row * gp.gettileSizeY());
+
+            if(tileNum == 0){
+                g2.drawImage(tile[0].image, x, y,
+                        (int)gp.gettileSizeX(),
+                        (int)gp.gettileSizeY(), null);
+            }else if (tileNum == 8 ||tileNum == 9)
+                g2.drawImage(tile[tileNum].image, x, y,
+                        (int)gp.gettileSizeX(),
+                        (int)gp.gettileSizeY(), null);
+            else{
+                g2.drawImage(tile[0].image, x, y,
+                        (int)gp.gettileSizeX(),
+                        (int)gp.gettileSizeY(), null);
             }
         }
+    }
+
+    for(int row = 0; row < gp.getRow(); row++){
+        for(int col = 0; col < gp.getCol(); col++){
+
+            int tileNum = mapTileNum[col][row];
+
+            // ถ้าเป็นพื้นอย่างเดียว ไม่ต้องวาดซ้ำ
+            if(tileNum == 0 || tileNum == 8 || tileNum == 9) continue;
+
+            int x = (int)(col * gp.gettileSizeX());
+            int y = (int)(row * gp.gettileSizeY());
+
+            int width = (int)gp.gettileSizeX();
+            int height = (int)gp.gettileSizeY();
+
+            if(tileNum == 1){
+                width *= 3;
+                height *= 3;
+
+                y -= gp.gettileSizeY();
+            }else if(tileNum == 2){
+                width *= 2;
+                height *= 2;
+
+                y -= gp.gettileSizeY();
+            }else if(tileNum == 3){
+                width *= 4;
+                height *= 4;
+
+                y -= gp.gettileSizeY();
+            }
+
+            g2.drawImage(tile[tileNum].image, x, y, width, height, null);
+        }
+    }
+        
     }
 }
