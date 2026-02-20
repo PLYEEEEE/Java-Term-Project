@@ -29,7 +29,7 @@ public class Knight extends Character {
     public void attack() {
         if (!usingSkill) {
             attacking = true;
-            hasDealtDamage = false;  // รีเซ็ตตอนเริ่มโจมตี
+            hasDealtDamage = false; // รีเซ็ตตอนเริ่มโจมตี
             attackStart = System.currentTimeMillis();
         }
     }
@@ -40,7 +40,7 @@ public class Knight extends Character {
                 now - lastSkillTime >= skillCooldown) {
 
             usingSkill = true;
-            hasDealtDamage = false;  // รีเซ็ตตอนเริ่มสกิล
+            hasDealtDamage = false; // รีเซ็ตตอนเริ่มสกิล
             skillStart = now;
             lastSkillTime = now;
         }
@@ -62,7 +62,7 @@ public class Knight extends Character {
 
         // ตัวละคร
         g2.setColor(Color.BLUE);
-        g2.fillOval((int)x, (int)y, 40, 40);
+        g2.fillOval((int) x, (int) y, 40, 40);
 
         // โจมตีครึ่งวงกลม
         if (attacking) {
@@ -71,13 +71,12 @@ public class Knight extends Character {
             int startAngle = (facing == 1) ? -90 : 90;
 
             g2.fillArc(
-                    (int)(x - attackRange/2 + 20),
-                    (int)(y - attackRange/2 + 20),
-                    (int)attackRange,
-                    (int)attackRange,
-                    startAngle,
-                    180
-            );
+                (int) (x + 20 - attackRange / 2),
+                (int) (y + 20 - attackRange / 2),
+                (int) attackRange,
+                (int) attackRange,
+                startAngle,
+                180);
         }
 
         // สกิล 360 องศา
@@ -85,11 +84,10 @@ public class Knight extends Character {
             g2.setColor(new Color(0, 255, 255, 120));
 
             g2.fillOval(
-                    (int)(x - skillRange/2 + 20),
-                    (int)(y - skillRange/2 + 20),
-                    (int)skillRange,
-                    (int)skillRange
-            );
+                    (int) (x - skillRange / 2 + 20),
+                    (int) (y - skillRange / 2 + 20),
+                    (int) skillRange,
+                    (int) skillRange);
         }
     }
 
@@ -120,4 +118,8 @@ public class Knight extends Character {
     public float getSkillRange() {
         return skillRange;
     }
+    public int getFacing() {
+    return facing;
+}
+
 }

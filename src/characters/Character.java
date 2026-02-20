@@ -7,7 +7,6 @@ public abstract class Character {
     protected String name;
     protected int maxHearts;
     protected int currentHearts;
-    protected int hearts;
     protected float x, y;
     protected float speed;
     protected boolean isAlive = true;
