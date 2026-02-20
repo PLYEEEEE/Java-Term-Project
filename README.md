@@ -30,3 +30,5 @@ The GUI provides interactive controls and visual representation to test slime fu
 - Visual slime character with movement, attack effects, and death animation
 - Real-time HP bar display  
 - Interactive controls for attacking, taking damage, wave progression, and movement
+
+@PLYEEEEE @putthichai-dev @Rachen010 @xfristxcom
