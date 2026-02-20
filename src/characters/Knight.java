@@ -17,8 +17,8 @@ public class Knight extends Character {
 
     private int facing = 1; // 1 = right, -1 = left
 
-    public Knight(String name, float x, float y) {
-        super(name, 5, x, y, 3.5f);
+    public Knight(String name, float x, float y,int sizex, int sizey) {
+        super(name, 5, x, y, 3.0f, sizex, sizey);
     }
 
     public void setFacing(int dir) {
@@ -43,6 +43,13 @@ public class Knight extends Character {
         }
     }
 
+    public float getSizaX() {
+        return sizeX;
+    }
+    public float getSizeY() {
+        return sizeY;
+    }
+
     public void update() {
         long now = System.currentTimeMillis();
 
@@ -59,7 +66,7 @@ public class Knight extends Character {
 
         // ตัวละคร
         g2.setColor(Color.BLUE);
-        g2.fillOval((int)x, (int)y, getsize(), getsize());
+        g2.fillOval((int)x, (int)y, (int)getSizeX(), (int)getSizeY());
 
         // โจมตีครึ่งวงกลม
         if (attacking) {
@@ -67,8 +74,8 @@ public class Knight extends Character {
 
             int startAngle = (facing == 1) ? -90 : 90;
             g2.fillArc(
-                    (int)(x - attackRange/2 + size/2),
-                    (int)(y - attackRange/2 + size/2),
+                    (int)(x - attackRange/2 + getSizeX()/2),
+                    (int)(y - attackRange/2 + getSizeY()/2),
                     (int)attackRange,
                     (int)attackRange,
                     startAngle,
@@ -80,8 +87,8 @@ public class Knight extends Character {
         if (usingSkill) {
             g2.setColor(new Color(0, 255, 255, 120));
             g2.fillOval(
-                    (int)(x - skillRange/2 + size/2),
-                    (int)(y - skillRange/2 + size/2),
+                    (int)(x - skillRange/2 + getSizeX()/2),
+                    (int)(y - skillRange/2 + getSizeY()/2),
                     (int)skillRange,
                     (int)skillRange
             );

@@ -10,15 +10,18 @@ public abstract class Character {
     protected float x, y;
     protected float speed;
     protected boolean isAlive = true;
-    protected int size = 50;
+    protected int sizeX;
+    protected int sizeY;
 
-    public Character(String name, int hearts, float x, float y, float speed) {
+    public Character(String name, int hearts, float x, float y, float speed, int sizeX, int sizeY) {
         this.name = name;
         this.maxHearts = hearts;
         this.currentHearts = hearts;
         this.x = x;
         this.y = y;
         this.speed = speed;
+        this.sizeX = sizeX;
+        this.sizeY = sizeY;
     }
 
     public float getX() {
@@ -42,8 +45,11 @@ public abstract class Character {
         return speed;
     }   
 
-    public int getsize() {
-        return size;
+    public float getSizeX() {
+        return sizeX;
+    }
+    public float getSizeY() {
+        return sizeY;
     }   
 
 

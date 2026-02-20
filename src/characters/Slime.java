@@ -10,6 +10,8 @@ package characters;
 import java.awt.*;
 
 public class Slime {
+        private int sizeX;
+        private int sizeY;
         // ...existing code...
 
         /**
@@ -18,11 +20,11 @@ public class Slime {
         public void draw(Graphics2D g2) {
             if (isDead) return;
             g2.setColor(new Color(0, 200, 0));
-            g2.fillOval((int)positionX, (int)positionY, 40, 40);
+            g2.fillOval((int)positionX, (int)positionY, (int)sizeX, (int)sizeY);
 
             // วาดขอบ
             g2.setColor(Color.BLACK);
-            g2.drawOval((int)positionX, (int)positionY, 40, 40);
+            g2.drawOval((int)positionX, (int)positionY, (int)sizeX, (int)sizeY);
 
             // วาด HP bar
             int barWidth = 40, barHeight = 6;
@@ -66,7 +68,9 @@ public class Slime {
     /**
      * Creates a new slime. Uses default medium size and melee type.
      */
-    public Slime() {
+    public Slime(int sizeX, int sizeY) {
+        this.sizeX = sizeX;
+        this.sizeY = sizeY;
         this.currentWave = 1;
         this.positionX = 0f;
         this.positionY = 0f;
@@ -229,6 +233,12 @@ public class Slime {
     
     public float getHPPercentage() {
         return maxHP > 0 ? (currentHP / maxHP) * 100f : 0f;
+    }
+    public float getSizeX() {
+        return sizeX;
+    }
+    public float getSizeY() {
+        return sizeY;
     }
     
     // ===== Setters =====
