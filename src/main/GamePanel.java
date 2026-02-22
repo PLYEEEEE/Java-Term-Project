@@ -36,6 +36,7 @@ public class GamePanel extends JPanel implements Runnable {
         knight = new Knight("Knight", 350, 250,tileSizeX, tileSizeY);
         tileManager = new TileManager(this);
 
+
         // สุ่มจำนวน slime 3-7 ตัว
         slimes = new ArrayList<>();
         Random rand = new Random();
@@ -115,10 +116,27 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void startGame() {
         if (gameThread == null) {
-
             gameThread = new Thread(this);
             isRunning = true;
             gameThread.start();
+        } else {
+            // รีเซ็ตสถานะเกม
+            knight.reset();
+            isGameOver = false;
+            isRunning = true;
+            gameThread = new Thread(this);
+            gameThread.start();
+        }
+    }
+
+    public void stopGame() {
+        isRunning = false;
+        try {
+            if (gameThread != null) {
+                gameThread.join();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -164,6 +182,17 @@ public class GamePanel extends JPanel implements Runnable {
             isGameOver = true;
             isRunning = false;
             repaint();
+            // หยุดเกมและแสดงหน้าจอ Game Over
+            try {
+                Thread.sleep(3000); // รอ 3 วินาที
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            // กลับไปที่เมนูหลัก
+            isGameOver = false;
+            Main main = new Main();
+            // หยุดเกมและปล่อยทรัพยากร
+            main.gameOver();
         }
     }
 

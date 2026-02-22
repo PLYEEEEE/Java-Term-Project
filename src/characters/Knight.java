@@ -117,6 +117,10 @@ public class Knight extends Character {
         g2.fillRect(barX + 1, barY + 1, (int)((barWidth - 1) * healthPercent), barHeight - 1);
     }
 
+    public void reset() {
+        this.health = maxHealth;
+    }
+
     public void takeDamage(int damage) {
         this.health -= damage;
         if (this.health < 0) {

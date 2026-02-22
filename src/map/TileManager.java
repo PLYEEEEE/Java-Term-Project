@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
-
 public class TileManager {
     GamePanel gp;
     Tile[] tile;

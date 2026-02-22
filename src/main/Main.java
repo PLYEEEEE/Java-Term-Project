@@ -22,6 +22,7 @@ public class Main {
         window.add(mainPanel);
         window.setVisible(true);
         cardLayout.show(mainPanel, "MenuScene");
+
     }
 
     public static JPanel createMenuPanel() {
@@ -64,6 +65,10 @@ public class Main {
         panel.add(new SmartBox("Item Details", null, 380, 280, 950, 450, 30));
 
         return panel;
+    }
+
+    public void gameOver() {
+        cardLayout.show(mainPanel, "MenuScene");
     }
 }
 
