@@ -10,8 +10,8 @@ import java.io.FileReader;
 public class TileManagerWorld {
     GamePanel gp;
     Knight knight;
-    Tile[] tile;
-    int mapTileNum[][];
+    public Tile[] tile;
+    public int mapTileNum[][];
 
     public TileManagerWorld(GamePanel gp, Knight knight) {
         this.gp = gp;
@@ -79,10 +79,8 @@ public class TileManagerWorld {
                 String[] numbers = line.split(" ");
                 for (int col = 0; col < numbers.length && col < gp.getMaxWorldCol(); col++) {
                     mapTileNum[col][row] = Integer.parseInt(numbers[col]);
-                
                 }
-                row++;
-               
+                row++;  
             }
             br.close();
         } catch (Exception e) {
@@ -91,63 +89,46 @@ public class TileManagerWorld {
     }
 
     public void draw(java.awt.Graphics2D g2) {
-
         for(int row = 0; row < gp.getMaxWorldRow(); row++){
             for(int col = 0; col < gp.getMaxWorldCol(); col++){
 
-                int ScreenX = (int)(col * gp.gettileSizeX() - knight.getWorldX()+ knight.screenX );
-                int ScreenY = (int)(row * gp.gettileSizeY() - knight.getWorldY() + knight.screenY );
-                int tileNum = mapTileNum[col][row];
+                // 1. คำนวณตำแหน่งพิกัดในโลก (World Position) ของช่องนี้ก่อน
+                int worldX = (int)(col * gp.gettileSizeX());
+                int worldY = (int)(row * gp.gettileSizeY());
 
-                if(tileNum == 0){
-                    g2.drawImage(tile[0].image, ScreenX, ScreenY,
-                    (int)gp.gettileSizeX(),
-                    (int)gp.gettileSizeY(), null);
-                }else if (tileNum == 8 ||tileNum == 9){
-                    g2.drawImage(tile[tileNum].image, ScreenX, ScreenY,
-                    (int)gp.gettileSizeX(),
-                    (int)gp.gettileSizeY(), null);
-                }else{
-                    g2.drawImage(tile[0].image, ScreenX, ScreenY,
-                    (int)gp.gettileSizeX(),
-                    (int)gp.gettileSizeY(), null);
-                }
-            }
-        }
+                // 2. คำนวณพิกัดที่จะวาดบนหน้าจอ (Screen Position)
+                int ScreenX = (int)(worldX - knight.getWorldX() + knight.screenX);
+                int ScreenY = (int)(worldY - knight.getWorldY() + knight.screenY);
 
-        for(int row = 0; row < gp.getMaxWorldRow(); row++){
-            for(int col = 0; col < gp.getMaxWorldCol(); col++){
+                // 3. ตัวเช็คขอบเขต: วาดเฉพาะเมื่อ Tile อยู่ในรัศมีที่หน้าจอมองเห็น
+                // เราจะเพิ่ม Buffer (เช่น tileSize * 5) เพื่อให้พวกต้นไม้ใหญ่ๆ ไม่แวบหายตอนอยู่ที่ขอบจอ
+                if (worldX + gp.gettileSizeX() * 2 > knight.getWorldX() - knight.screenX &&
+                    worldX - gp.gettileSizeX() * 2 < knight.getWorldX() + knight.screenX + gp.getX() &&
+                    worldY + gp.gettileSizeY() * 2 > knight.getWorldY() - knight.screenY &&
+                    worldY - gp.gettileSizeY() * 2 < knight.getWorldY() + knight.screenY + gp.getY()) {
 
-                int ScreenX = (int)(col * gp.gettileSizeX() - knight.getWorldX() + knight.screenX );
-                int ScreenY = (int)(row * gp.gettileSizeY() - knight.getWorldY() + knight.screenY );
-                int tileNum = mapTileNum[col][row];
+                    int tileNum = mapTileNum[col][row];
+                    if(tileNum == 8) continue;
 
-            // ถ้าเป็นพื้นอย่างเดียว ไม่ต้องวาดซ้ำ
-                if(tileNum == 0 || tileNum == 8 || tileNum == 9) continue;
+                    int width = (int)gp.gettileSizeX();
+                    int height = (int)gp.gettileSizeY();
 
-                int width = (int)gp.gettileSizeX();
-                int height = (int)gp.gettileSizeY();
-
-                if(tileNum == 1){
-                    width *= 3;
-                    height *= 3;
-
-                    ScreenY -= gp.gettileSizeY();
-                }else if(tileNum == 2){
-                    width *= 2;
-                    height *= 2;
-
-                    ScreenY -= gp.gettileSizeY();
-                }else if(tileNum == 3){
-                    width *= 4;
-                    height *= 4;
-
-                    ScreenY -= gp.gettileSizeY();
-                }
+                    if(tileNum == 1 || tileNum == 3){
+                        width *= 4;
+                        height *= 4;
+                        ScreenX -= (gp.gettileSizeX()*2 - gp.gettileSizeX()/2);
+                        ScreenY -= (gp.gettileSizeY()*3 - gp.gettileSizeY()/2);
+                    } else if(tileNum == 2){
+                        width *= 2;
+                        height *= 2;
+                        ScreenX -= (gp.gettileSizeX()*1 - gp.gettileSizeX()/2);
+                        ScreenY -= (gp.gettileSizeY()*1 - gp.gettileSizeY()/2);
+                    }
 
                 g2.drawImage(tile[tileNum].image, ScreenX, ScreenY, width, height, null);
+        
+                }
             }
         }
-        
     }
 }

@@ -1,9 +1,11 @@
 package main;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import characters.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -26,8 +28,8 @@ public class GamePanel extends JPanel implements Runnable {
     private int tileSizeY = sizeY / row;
     private TileManagerWorld tileManager;
     private boolean isGameOver = false;
-    private int maxWorldCol = 50;
-    private int maxWorldRow = 50;
+    private int maxWorldCol = 42;
+    private int maxWorldRow = 42;
     private int spawnCharX = 22;
     private int spawnCharY = 9; 
 
@@ -203,21 +205,31 @@ public class GamePanel extends JPanel implements Runnable {
 
     private void update() {
         if (isGameOver) return;
-        int nextX = knight.getWorldX();
-        int nextY = knight.getWorldY();
+        // 1. จำลองตำแหน่งถัดไป (ยังไม่ทับค่าจริง)
+        int nextWorldX = knight.getWorldX();
+        int nextWorldY = knight.getWorldY();
+        int speed = (int) knight.getSpeed();
 
+        if (up) nextWorldY -= speed;
+        if (down) nextWorldY += speed;
+        if (left) nextWorldX -= speed;
+        if (right) nextWorldX += speed;
 
-        if (up)
-            nextY -= knight.getSpeed();
-        if (down)
-            nextY += knight.getSpeed();
-        if (left)
-            nextX -= knight.getSpeed();
-        if (right)
-            nextX += knight.getSpeed();
-        // เรื่อนแผนที่ยังไม่เช็คการชน ให้ตัวละครเคลื่อนที่ก่อน
-        knight.setWorldX(nextX);
-        knight.setWorldY(nextY);
+        // 2. คำนวณหาว่า "จุดกึ่งกลาง" ของตัวละครในตำแหน่งถัดไป จะไปตกที่ช่อง (Col, Row) ไหน
+        // (บวก tileSize/2 เพื่อให้จุดเช็กอยู่กลางตัวละครพอดีครับ)
+        int checkCol = (nextWorldX + (int)gettileSizeX() / 2) / (int)gettileSizeX();
+        int checkRow = (nextWorldY + (int)gettileSizeY() / 2) / (int)gettileSizeY();
+        // 3. ป้องกันดัชนีเกินขอบเขตแผนที่ (50x50)
+        if (checkCol >= 1 && checkCol < getMaxWorldCol()-1 && checkRow >= 1 && checkRow < getMaxWorldRow()-1) {
+            int tileNum = tileManager.mapTileNum[checkCol][checkRow];
+            
+            // 4. เช็กว่าช่องนั้น "เดินได้" หรือไม่
+            if (tileManager.tile[tileNum].collision == false) {
+                // ถ้าไม่ชน ถึงจะอนุญาตให้เปลี่ยนพิกัดจริงครับ
+                knight.setWorldX(nextWorldX);
+                knight.setWorldY(nextWorldY);
+            }
+        }
 
         knight.update();
         checkCollisions();
@@ -245,6 +257,15 @@ public class GamePanel extends JPanel implements Runnable {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+
+        //โหลดรูป
+        try {
+            Image imagegrass = ImageIO.read(getClass().getResourceAsStream("/Image/Terrain/Grass/Grass2.png"));
+            g2.drawImage(imagegrass, 0, 0, sizeX, sizeY, null);
+        } catch (IOException e) {
+    
+            e.printStackTrace();
+        }
         
         tileManager.draw(g2);
        

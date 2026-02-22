@@ -1,13 +1,10 @@
 package characters;
 
-
-
 public abstract class Character {
 
     protected String name;
     protected int maxHearts;
     protected int currentHearts;
-    protected float x, y;
     protected int worldX, worldY;
     protected float speed;
     protected boolean isAlive = true;
@@ -23,23 +20,6 @@ public abstract class Character {
         this.speed = speed;
         this.sizeX = sizeX;
         this.sizeY = sizeY;
-    }
-
-    public float getX() {
-        return x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
-    public void setX(float x) {
-        this.x = x;
-       
-    }
-    public void setY(float y) {
-        this.y = y;
-        
     }
 
     public int getWorldX() {
