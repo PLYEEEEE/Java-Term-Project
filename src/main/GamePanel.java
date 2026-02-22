@@ -48,13 +48,9 @@ public class GamePanel extends JPanel implements Runnable {
             Slime s = new Slime( tileSizeX, tileSizeY);
             // สุ่มตำแหน่ง ไม่ให้ซ้อนกับ Knight
             int sx, sy;
-            do {
-                sx = (int) (rand.nextInt(maxWorldCol * tileSizeX)  + knight.getSizeX());
-                sy = (int) (rand.nextInt(maxWorldRow * tileSizeY ) + knight.getSizeY());
-            } while (Math.abs(sx - knight.getWorldX()) < 60 &&
-                    Math.abs(sy - knight.getWorldY()) < 60);
-
-            s.setPointsWorldPosition(29*tileSizeX,9*tileSizeY);
+            sx = rand.nextInt(maxWorldCol - 5) * tileSizeX + tileSizeX*5;
+            sy = rand.nextInt(maxWorldRow - 5) * tileSizeY + tileSizeY*5;
+            s.setPointsWorldPosition(sx, sy);
             slimes.add(s);
         }
 
