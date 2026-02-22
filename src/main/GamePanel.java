@@ -24,17 +24,20 @@ public class GamePanel extends JPanel implements Runnable {
     private int row = (int)(9*multiplier);
     private int tileSizeX = sizeX / col;
     private int tileSizeY = sizeY / row;
-    private TileManager tileManager;
+    private TileManagerWorld tileManager;
     private boolean isGameOver = false;
-
+    private int maxWorldCol = 50;
+    private int maxWorldRow = 50;
+    private int spawnCharX = 22;
+    private int spawnCharY = 9; 
 
     public GamePanel() {
         setPreferredSize(new Dimension(sizeX, sizeY));
         setBackground(Color.BLACK);
         setFocusable(true);
 
-        knight = new Knight("Knight", 350, 250,tileSizeX, tileSizeY);
-        tileManager = new TileManager(this);
+        knight = new Knight("Knight", tileSizeX*spawnCharX, tileSizeY*spawnCharY, tileSizeX, tileSizeY,sizeX,sizeY);
+        tileManager = new TileManagerWorld(this , knight);
 
 
         // สุ่มจำนวน slime 3-7 ตัว
@@ -44,14 +47,14 @@ public class GamePanel extends JPanel implements Runnable {
         for (int i = 0; i < slimeCount; i++) {
             Slime s = new Slime( tileSizeX, tileSizeY);
             // สุ่มตำแหน่ง ไม่ให้ซ้อนกับ Knight
-            float sx, sy;
+            int sx, sy;
             do {
-                sx = rand.nextInt(700) + 50;
-                sy = rand.nextInt(500) + 50;
-            } while (Math.abs(sx - knight.getX()) < 60 &&
-                    Math.abs(sy - knight.getY()) < 60);
+                sx = (int) (rand.nextInt(maxWorldCol * tileSizeX)  + knight.getSizeX());
+                sy = (int) (rand.nextInt(maxWorldRow * tileSizeY ) + knight.getSizeY());
+            } while (Math.abs(sx - knight.getWorldX()) < 60 &&
+                    Math.abs(sy - knight.getWorldY()) < 60);
 
-            s.setPosition(sx, sy);
+            s.setPointsWorldPosition(29*tileSizeX,9*tileSizeY);
             slimes.add(s);
         }
 
@@ -76,8 +79,10 @@ public class GamePanel extends JPanel implements Runnable {
                         // โจมตี: ลดเลือด slime 1 หน่วยถ้าอยู่ในพื้นที่โจมตี (รัศมี 150)
                         for (Slime s : slimes) {
                             if (!s.isDead()) {
-                                float dx = (s.getPositionX() + s.getSizeX()/2) - (knight.getX() + knight.getSizeX()/2);
-                                float dy = (s.getPositionY() + s.getSizeY()/2) - (knight.getY() + knight.getSizeY()/2);
+                                int posSlimeX = (int) (s.getPointsWorldX() - knight.getWorldX() + knight.screenX);
+                                int posSlimeY = (int) (s.getPointsWorldY() - knight.getWorldY() + knight.screenY);
+                                float dx = (posSlimeX + s.getSizeX()/2) - (knight.getScreenX() + knight.getSizeX()/2);
+                                float dy = (posSlimeY + s.getSizeY()/2) - (knight.getScreenY() + knight.getSizeY()/2);
                                 float dist = (float) Math.sqrt(dx * dx + dy * dy);
                                 if (dist <= 150) {
                                     s.takeDamage(1f);
@@ -90,8 +95,10 @@ public class GamePanel extends JPanel implements Runnable {
                         // ใช้สกิล: ลดเลือด slime 2 หน่วยถ้าอยู่ในพื้นที่สกิล (รัศมี 300)
                         for (Slime s : slimes) {
                             if (!s.isDead()) {
-                                float dx = (s.getPositionX() + s.getSizeX()/2) - (knight.getX() + knight.getSizeX()/2);
-                                float dy = (s.getPositionY() + s.getSizeY()/2) - (knight.getY() + knight.getSizeY()/2);
+                                int posSlimeX = (int) (s.getPointsWorldX() - knight.getWorldX() + knight.screenX);
+                                int posSlimeY = (int) (s.getPointsWorldY() - knight.getWorldY() + knight.screenY);
+                                float dx = (posSlimeX + s.getSizeX()/2) - (knight.getScreenX() + knight.getSizeX()/2);
+                                float dy = (posSlimeY + s.getSizeY()/2) - (knight.getScreenY() + knight.getSizeY()/2);
                                 float dist = (float) Math.sqrt(dx * dx + dy * dy);
                                 if (dist <= 300) {
                                     s.takeDamage(2f);
@@ -162,8 +169,10 @@ public class GamePanel extends JPanel implements Runnable {
         long now = System.currentTimeMillis();
         for (Slime s : slimes) {
             if (!s.isDead()) {
-                float dx = (s.getPositionX() + s.getSizeX() / 2) - (knight.getX() + knight.getSizeX() / 2);
-                float dy = (s.getPositionY() + s.getSizeY() / 2) - (knight.getY() + knight.getSizeY() / 2);
+                int posSlimeX = (int) (s.getPointsWorldX() - knight.getWorldX() + knight.screenX);
+                int posSlimeY = (int) (s.getPointsWorldY() - knight.getWorldY() + knight.screenY);
+                float dx = (posSlimeX + s.getSizeX() / 2) - (knight.getScreenX() + knight.getSizeX() / 2);
+                float dy = (posSlimeY + s.getSizeY() / 2) - (knight.getScreenY() + knight.getSizeY() / 2);
                 float dist = (float) Math.sqrt(dx * dx + dy * dy);
                 float collisionDistance = (s.getSizeX() + knight.getSizeX()) / 2;
 
@@ -198,8 +207,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     private void update() {
         if (isGameOver) return;
-        float nextX = knight.getX();
-        float nextY = knight.getY();
+        int nextX = knight.getWorldX();
+        int nextY = knight.getWorldY();
 
 
         if (up)
@@ -210,40 +219,30 @@ public class GamePanel extends JPanel implements Runnable {
             nextX -= knight.getSpeed();
         if (right)
             nextX += knight.getSpeed();
-
-        // ตรวจสอบการชนขอบหน้าจอ
-        if (nextX >= 0 && nextX <= getWidth() - knight.getSizeX()) {
-            knight.setX(nextX);
-        }
-        if (nextY >= 0 && nextY <= getHeight() - knight.getSizeY()) {
-            knight.setY(nextY);
-        }
+        // เรื่อนแผนที่ยังไม่เช็คการชน ให้ตัวละครเคลื่อนที่ก่อน
+        knight.setWorldX(nextX);
+        knight.setWorldY(nextY);
 
         knight.update();
-
         checkCollisions();
-
         checkGameOver();
 
-        // ให้ทุก slime วิ่งเข้าหา knight และไม่ซ้อน
+        //  ให้ทุก slime วิ่งเข้าหา knight และไม่ซ้อน
         for (Slime s : slimes) {
             if (s.isDead())
                 continue;
-            float slimeX = s.getPositionX() + 20;
-            float slimeY = s.getPositionY() + 20;
-            float knightX = knight.getX() + 20;
-            float knightY = knight.getY() + 20;
-            float vx = knightX - slimeX;
-            float vy = knightY - slimeY;
-            float dist = (float) Math.sqrt(vx * vx + vy * vy);
-            float minDist = 40f;
-            if (dist > minDist) {
-                float speed = s.getMoveSpeed() / 60f;
-                float mx = vx / dist * speed;
-                float my = vy / dist * speed;
-                s.move(mx, my);
+            int posSlimeX = (int) (s.getPointsWorldX() - knight.getWorldX() + knight.screenX);
+            int posSlimeY = (int) (s.getPointsWorldY() - knight.getWorldY() + knight.screenY);
+            float dx = (posSlimeX + s.getSizeX() / 2) - (knight.getScreenX() + knight.getSizeX() / 2);
+            float dy = (posSlimeY + s.getSizeY() / 2) - (knight.getScreenY() + knight.getSizeY() / 2);
+            float dist = (float) Math.sqrt(dx * dx + dy * dy);
+            if (dist > knight.getSizeX()) {
+                float moveX = (dx / dist) * s.getMoveSpeed();
+                float moveY = (dy / dist) * s.getMoveSpeed();
+                s.setPositionWorld((int)(s.getPointsWorldX() - moveX), (int)(s.getPointsWorldY() - moveY));
             }
         }
+        
     }
 
     @Override
@@ -254,7 +253,7 @@ public class GamePanel extends JPanel implements Runnable {
         tileManager.draw(g2);
        
         for (Slime s : slimes) {
-            s.draw(g2);
+            s.draw(g2,knight);
         }
         
         if (!isGameOver && knight.getHealth() > 0) {
@@ -269,6 +268,13 @@ public class GamePanel extends JPanel implements Runnable {
             int msgWidth = g2.getFontMetrics().stringWidth(msg);
             g2.drawString(msg, (getWidth() - msgWidth) / 2, getHeight() / 2);
         }
+    }
+
+    public int getMaxWorldCol() {
+        return maxWorldCol;
+    }
+    public int getMaxWorldRow() {
+        return maxWorldRow;
     }
 
     public float gettileSizeX() {

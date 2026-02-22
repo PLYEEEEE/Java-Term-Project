@@ -8,17 +8,18 @@ public abstract class Character {
     protected int maxHearts;
     protected int currentHearts;
     protected float x, y;
+    protected int worldX, worldY;
     protected float speed;
     protected boolean isAlive = true;
     protected int sizeX;
     protected int sizeY;
 
-    public Character(String name, int hearts, float x, float y, float speed, int sizeX, int sizeY) {
+    public Character(String name, int hearts, int worldX, int worldY, float speed, int sizeX, int sizeY) {
         this.name = name;
         this.maxHearts = hearts;
         this.currentHearts = hearts;
-        this.x = x;
-        this.y = y;
+        this.worldX = worldX;
+        this.worldY = worldY;
         this.speed = speed;
         this.sizeX = sizeX;
         this.sizeY = sizeY;
@@ -39,6 +40,20 @@ public abstract class Character {
     public void setY(float y) {
         this.y = y;
         
+    }
+
+    public int getWorldX() {
+        return worldX;
+    }
+    public int getWorldY() {
+        return worldY;
+    }
+
+    public void setWorldX(int worldX) {
+        this.worldX = worldX;
+    }
+    public void setWorldY(int worldY) {
+        this.worldY = worldY;
     }
 
     public float getSpeed() {

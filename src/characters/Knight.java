@@ -7,13 +7,8 @@ public class Knight extends Character {
     private int health = 10;
     private final int maxHealth = 10;
 
-    public int getHealth() {
-        return health;
-    }
-
-    public int getMaxHealth() {
-        return maxHealth;
-    }
+    public int screenX;
+    public int screenY;
 
     private float attackRange = 150;
     private float skillRange = 300;
@@ -28,8 +23,10 @@ public class Knight extends Character {
 
     private int facing = 1; // 1 = right, -1 = left
 
-    public Knight(String name, float x, float y, int sizex, int sizey) {
-        super(name, 5, x, y, 3.0f, sizex, sizey);
+    public Knight(String name, int worldX, int worldY, int sizex, int sizey, int screenWidth, int screenHeight) {
+        super(name, 5, worldX, worldY, 3.0f, sizex, sizey);
+        this.screenX = screenWidth / 2 - sizex / 2;
+        this.screenY = screenHeight / 2 - sizey / 2;
     }
 
     public void setFacing(int dir) {
@@ -54,13 +51,7 @@ public class Knight extends Character {
         }
     }
 
-    public float getSizaX() {
-        return sizeX;
-    }
-    public float getSizeY() {
-        return sizeY;
-    }
-
+    
     public void update() {
         long now = System.currentTimeMillis();
 
@@ -77,7 +68,7 @@ public class Knight extends Character {
 
         // ตัวละคร
         g2.setColor(Color.BLUE);
-        g2.fillOval((int)x, (int)y, (int)getSizeX(), (int)getSizeY());
+        g2.fillOval(screenX, screenY,(int)getSizeX(), (int)getSizeY());
 
         // โจมตีครึ่งวงกลม
         if (attacking) {
@@ -85,8 +76,8 @@ public class Knight extends Character {
 
             int startAngle = (facing == 1) ? -90 : 90;
             g2.fillArc(
-                    (int)(x - attackRange/2 + getSizeX()/2),
-                    (int)(y - attackRange/2 + getSizeY()/2),
+                    (int)(screenX - attackRange/2 + getSizeX()/2),
+                    (int)(screenY - attackRange/2 + getSizeY()/2),
                     (int)attackRange,
                     (int)attackRange,
                     startAngle,
@@ -98,8 +89,8 @@ public class Knight extends Character {
         if (usingSkill) {
             g2.setColor(new Color(0, 255, 255, 120));
             g2.fillOval(
-                    (int)(x - skillRange/2 + getSizeX()/2),
-                    (int)(y - skillRange/2 + getSizeY()/2),
+                    (int)(screenX - skillRange/2 + getSizeX()/2),
+                    (int)(screenY - skillRange/2 + getSizeY()/2),
                     (int)skillRange,
                     (int)skillRange
             );
@@ -109,8 +100,8 @@ public class Knight extends Character {
         g2.setColor(Color.RED);
         int barWidth = (int)getSizeX();
         int barHeight = 8;
-        int barX = (int)x;
-        int barY = (int)y - barHeight - 5;
+        int barX = (int)screenX;
+        int barY = (int)screenY - barHeight - 5;
         float healthPercent = (float)health / maxHealth;
         g2.drawRect(barX, barY, barWidth, barHeight);
         g2.setColor(Color.GREEN);
@@ -127,4 +118,27 @@ public class Knight extends Character {
             this.health = 0;
         }
     }
+    
+    public float getSizeX() {
+        return sizeX;
+    }
+    public float getSizeY() {
+        return sizeY;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public int getScreenX() {
+        return screenX;
+    }
+    public int getScreenY() {
+        return screenY;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
 }

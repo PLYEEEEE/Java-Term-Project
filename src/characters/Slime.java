@@ -12,24 +12,28 @@ import java.awt.*;
 public class Slime {
         private int sizeX;
         private int sizeY;
+        
         // ...existing code...
 
         /**
          * วาด Slime ลงบนหน้าจอ
          */
-        public void draw(Graphics2D g2) {
+        public void draw(Graphics2D g2,Knight knight) {
             if (isDead) return;
             g2.setColor(new Color(0, 200, 0));
-            g2.fillOval((int)positionX, (int)positionY, (int)sizeX, (int)sizeY);
+
+            int screenX = (int)(pointsWorldX - knight.getWorldX() + knight.screenX);
+            int screenY = (int)(pointsWorldY - knight.getWorldY() + knight.screenY);
+            g2.fillOval(screenX, screenY, sizeX, sizeY);
 
             // วาดขอบ
             g2.setColor(Color.BLACK);
-            g2.drawOval((int)positionX, (int)positionY, (int)sizeX, (int)sizeY);
+            g2.drawOval(screenX, screenY, sizeX, sizeY);
 
             // วาด HP bar
             int barWidth = 40, barHeight = 6;
-            int hpBarX = (int)positionX;
-            int hpBarY = (int)positionY - 10;
+            int hpBarX = screenX + sizeX/2 - barWidth/2;
+            int hpBarY = screenY - 10;
             float hpPercent = Math.max(0, Math.min(1, currentHP / maxHP));
             g2.setColor(Color.RED);
             g2.fillRect(hpBarX, hpBarY, barWidth, barHeight);
@@ -42,7 +46,7 @@ public class Slime {
     // ===== Base Stats (before multipliers) =====
     private static final float BASE_HP = 3f;
     private static final float BASE_ATTACK = 15f;
-    private static final float BASE_MOVE_SPEED = 80f;
+    private static final float BASE_MOVE_SPEED = 2f;
     // EXP removed
     
     // ===== Scaling Constants =====
@@ -58,6 +62,8 @@ public class Slime {
     protected float attackRange;
     protected float positionX;
     protected float positionY;
+    protected int pointsWorldX;
+    protected int pointsWorldY;
     protected boolean isDead;
     
     // Current wave number (for stat scaling)
@@ -72,8 +78,8 @@ public class Slime {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         this.currentWave = 1;
-        this.positionX = 0f;
-        this.positionY = 0f;
+        this.pointsWorldX = 0;
+        this.pointsWorldY = 0;
         this.isDead = false;
         calculateBaseStats();
         applyScaling();
@@ -173,23 +179,9 @@ public class Slime {
      * @param dx Change in X position
      * @param dy Change in Y position
      */
-    public void move(float dx, float dy) {
-        if (isDead) return;
-        this.positionX += dx;
-        this.positionY += dy;
-    }
-    
-    /**
-     * Calculates distance to a target position.
-     * 
-     * @param targetX Target X coordinate
-     * @param targetY Target Y coordinate
-     * @return Distance in pixels
-     */
-    public float distanceTo(float targetX, float targetY) {
-        float dx = targetX - positionX;
-        float dy = targetY - positionY;
-        return (float)Math.sqrt(dx * dx + dy * dy);
+    public void setPositionWorld(int x, int y) {
+        this.pointsWorldX = x;
+        this.pointsWorldY = y;
     }
     
     // ===== Getters =====
@@ -226,6 +218,13 @@ public class Slime {
     public float getPositionY() {
         return positionY;
     }
+    public int getPointsWorldX() {
+        return pointsWorldX;
+    }
+    
+    public int getPointsWorldY() {
+        return pointsWorldY;
+    }
     
     public int getCurrentWave() {
         return currentWave;
@@ -243,10 +242,11 @@ public class Slime {
     
     // ===== Setters =====
     
-    public void setPosition(float x, float y) {
-        this.positionX = x;
-        this.positionY = y;
+    public void setPointsWorldPosition(int x, int y) {
+        this.pointsWorldX = x;
+        this.pointsWorldY = y;
     }
+
     
     @Override
     public String toString() {
