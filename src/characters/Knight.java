@@ -1,32 +1,39 @@
 package characters;
-
 import java.awt.*;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 public class Knight extends Character {
 
     private int health = 10;
     private final int maxHealth = 10;
-
     public int screenX;
     public int screenY;
 
+    public boolean action = false;
+    private ImageCharacter imageIdle[];
+    private int idleCount = 0;
+    private int delayAni = 0;
+
     private float attackRange = 150;
     private float skillRange = 300;
-
-    private boolean attacking = false;
-    private boolean usingSkill = false;
-
+    public boolean attacking = false;
+    public boolean usingSkill = false;
+    public boolean cooldownAttack = false;
+    public boolean cooldownSkill = false;
     private long attackStart;
+    private long attackCooldown = 400;
     private long skillStart;
     private long skillCooldown = 10000;
-    private long lastSkillTime = 0;
-
     private int facing = 1; // 1 = right, -1 = left
 
     public Knight(String name, int worldX, int worldY, int sizex, int sizey, int screenWidth, int screenHeight) {
         super(name, 5, worldX, worldY, 3.0f, sizex, sizey);
         this.screenX = screenWidth / 2 - sizex / 2;
         this.screenY = screenHeight / 2 - sizey / 2;
+        imageIdle = new ImageCharacter[5];
+        loadImageIdle();
     }
 
     public void setFacing(int dir) {
@@ -34,41 +41,52 @@ public class Knight extends Character {
     }
 
     public void attack() {
-        if (!usingSkill) {
+        if (!usingSkill & !attacking && !cooldownAttack) {
+            cooldownAttack = true;
             attacking = true;
             attackStart = System.currentTimeMillis();
         }
     }
 
     public void useSkill() {
-        long now = System.currentTimeMillis();
-        if (!attacking && !usingSkill &&
-                now - lastSkillTime >= skillCooldown) {
-
+        if (!attacking && !usingSkill && !cooldownSkill) {
+            cooldownSkill = true;
             usingSkill = true;
-            skillStart = now;
-            lastSkillTime = now;
+            skillStart = System.currentTimeMillis();
         }
     }
 
-    
     public void update() {
         long now = System.currentTimeMillis();
 
-        if (attacking && now - attackStart > 250) {
+        if (attacking && now - attackStart > 100) {
             attacking = false;
         }
 
         if (usingSkill && now - skillStart > 400) {
             usingSkill = false;
         }
+        if(cooldownAttack&&now-attackStart>attackCooldown) {
+            cooldownAttack = false;
+        }
+        if (cooldownSkill&&now-skillStart>skillCooldown) {
+            cooldownSkill = false;
+        }
     }
 
     public void draw(Graphics2D g2) {
-
         // ตัวละคร
-        g2.setColor(Color.BLUE);
-        g2.fillOval(screenX, screenY,(int)getSizeX(), (int)getSizeY());
+        if (action == false) {
+            g2.drawImage(imageIdle[idleCount].image,(int)(screenX-sizeX*3/4),(int)(screenY-sizeY*1.5),(int)(sizeX*2.5),(int)(sizeY*2.5), null);
+            if (delayAni == 3) {
+                delayAni = -1;
+                idleCount++;
+                if (idleCount==5) {
+                    idleCount=0;
+                }
+            }
+            delayAni++;
+        }
 
         // โจมตีครึ่งวงกลม
         if (attacking) {
@@ -96,16 +114,76 @@ public class Knight extends Character {
             );
         }
 
-        // บาร์สุขภาพ
-        g2.setColor(Color.RED);
-        int barWidth = (int)getSizeX();
-        int barHeight = 8;
-        int barX = (int)screenX;
-        int barY = (int)screenY - barHeight - 5;
+
+        int barWidth = (int)450;
+        int barHeight = 30;
+        int barX = 50;
+        int barY = 35;
         float healthPercent = (float)health / maxHealth;
-        g2.drawRect(barX, barY, barWidth, barHeight);
+        g2.setColor(Color.black);
+        g2.fillRect(barX, barY, barWidth, barHeight);
         g2.setColor(Color.GREEN);
-        g2.fillRect(barX + 1, barY + 1, (int)((barWidth - 1) * healthPercent), barHeight - 1);
+        g2.fillRect(barX + 1, barY + 1, (int)((barWidth - 2) * healthPercent), barHeight - 2);
+        
+        //ดูCoolDownSkill
+        long nowSkill = System.currentTimeMillis();
+        int sizeSkillCooldown = 100;
+        int posXSkillCooldown = 1130;
+        int posYSkillCooldown = 570;
+        float valueSkill = (float)(nowSkill - skillStart) / skillCooldown;
+        if (valueSkill >= 1) {
+            valueSkill = 1;
+        }
+        g2.setColor(Color.black);
+        g2.fillRect(posXSkillCooldown,posYSkillCooldown, sizeSkillCooldown, sizeSkillCooldown);
+        g2.setColor(Color.green);
+        g2.fillRect(posXSkillCooldown+1,posYSkillCooldown+1,sizeSkillCooldown-2,sizeSkillCooldown-2);
+        if (skillStart!=0) {
+           g2.setColor(Color.gray);
+           g2.fillRect(posXSkillCooldown+1,((posYSkillCooldown+2)+(int)((sizeSkillCooldown-2)*(valueSkill))),sizeSkillCooldown-2,(int)((sizeSkillCooldown-2)*(1-valueSkill)));  
+        }
+        //ดูNormalattack
+        long nowAttack = System.currentTimeMillis();
+        int sizeAttackCooldown = 100;
+        int posXAttackCooldown = 980;
+        int posYAttackCooldown = 570;
+        float valueAttack = (float)(nowAttack - attackStart) / attackCooldown;
+        if (valueAttack >= 1) {
+            valueAttack = 1;
+        }
+        g2.setColor(Color.black);
+        g2.fillRect(posXAttackCooldown,posYAttackCooldown, sizeAttackCooldown, sizeAttackCooldown);
+        g2.setColor(Color.red);
+        g2.fillRect(posXAttackCooldown+1,posYAttackCooldown+1,sizeAttackCooldown-2,sizeAttackCooldown-2);
+        if (attackStart!=0) {
+           g2.setColor(Color.gray);
+           g2.fillRect(posXAttackCooldown+1,((posYAttackCooldown+2)+(int)((sizeAttackCooldown-2)*(valueAttack))),sizeAttackCooldown-2,(int)((sizeAttackCooldown-2)*(1-valueAttack)));  
+        }
+    }
+
+
+    public void loadImageIdle(){
+        try {
+            
+            imageIdle[0] = new ImageCharacter();
+            imageIdle[0].image = ImageIO.read(getClass().getResourceAsStream("/Image/Main_Character/MC/Idle/MCIdle1.png"));
+            
+            imageIdle[1] = new ImageCharacter();
+            imageIdle[1].image = ImageIO.read(getClass().getResourceAsStream("/Image/Main_Character/MC/Idle/MCIdle2.png"));
+
+            imageIdle[2] = new ImageCharacter();
+            imageIdle[2].image = ImageIO.read(getClass().getResourceAsStream("/Image/Main_Character/MC/Idle/MCIdle3.png"));
+
+            imageIdle[3] = new ImageCharacter();
+            imageIdle[3].image = ImageIO.read(getClass().getResourceAsStream("/Image/Main_Character/MC/Idle/MCIdle4.png"));
+
+            imageIdle[4] = new ImageCharacter();
+            imageIdle[4].image = ImageIO.read(getClass().getResourceAsStream("/Image/Main_Character/MC/Idle/MCIdle5.png"));
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public void reset() {

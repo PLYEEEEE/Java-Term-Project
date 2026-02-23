@@ -72,34 +72,40 @@ public class GamePanel extends JPanel implements Runnable {
                         knight.setFacing(1);
                     }
                     case KeyEvent.VK_SPACE -> {
-                        knight.attack();
-                        
-                        // โจมตี: ลดเลือด slime 1 หน่วยถ้าอยู่ในพื้นที่โจมตี (รัศมี 150)
-                        for (Slime s : slimes) {
-                            if (!s.isDead()) {
-                                int posSlimeX = (int) (s.getPointsWorldX() - knight.getWorldX() + knight.screenX);
-                                int posSlimeY = (int) (s.getPointsWorldY() - knight.getWorldY() + knight.screenY);
-                                float dx = (posSlimeX + s.getSizeX()/2) - (knight.getScreenX() + knight.getSizeX()/2);
-                                float dy = (posSlimeY + s.getSizeY()/2) - (knight.getScreenY() + knight.getSizeY()/2);
-                                float dist = (float) Math.sqrt(dx * dx + dy * dy);
-                                if (dist <= 150) {
-                                    s.takeDamage(1f);
+                        if (!knight.cooldownAttack) {
+                            knight.attack();
+                            // โจมตี: ลดเลือด slime 1 หน่วยถ้าอยู่ในพื้นที่โจมตี (รัศมี 150)
+                            for (Slime s : slimes) {
+                                if (!s.isDead()) {
+                                    int posSlimeX = (int) (s.getPointsWorldX() - knight.getWorldX() + knight.screenX);
+                                    int posSlimeY = (int) (s.getPointsWorldY() - knight.getWorldY() + knight.screenY);
+                                    float dx = (posSlimeX + s.getSizeX()/2) - (knight.getScreenX() + knight.getSizeX()/2);
+                                    float dy = (posSlimeY + s.getSizeY()/2) - (knight.getScreenY() + knight.getSizeY()/2);
+                                    float dist = (float) Math.sqrt(dx * dx + dy * dy);
+                                    if (dist <= 75) {
+                                        s.takeDamage(1f);
+                                    }
                                 }
                             }
                         }
+                        
+                        
+                        
                     }
                     case KeyEvent.VK_Q -> {
-                        knight.useSkill();
-                        // ใช้สกิล: ลดเลือด slime 2 หน่วยถ้าอยู่ในพื้นที่สกิล (รัศมี 300)
-                        for (Slime s : slimes) {
-                            if (!s.isDead()) {
-                                int posSlimeX = (int) (s.getPointsWorldX() - knight.getWorldX() + knight.screenX);
-                                int posSlimeY = (int) (s.getPointsWorldY() - knight.getWorldY() + knight.screenY);
-                                float dx = (posSlimeX + s.getSizeX()/2) - (knight.getScreenX() + knight.getSizeX()/2);
-                                float dy = (posSlimeY + s.getSizeY()/2) - (knight.getScreenY() + knight.getSizeY()/2);
-                                float dist = (float) Math.sqrt(dx * dx + dy * dy);
-                                if (dist <= 300) {
-                                    s.takeDamage(2f);
+                        if (!knight.cooldownSkill) {
+                            knight.useSkill();
+                            // ใช้สกิล: ลดเลือด slime 2 หน่วยถ้าอยู่ในพื้นที่สกิล (รัศมี 300)
+                            for (Slime s : slimes) {
+                                if (!s.isDead()) {
+                                    int posSlimeX = (int) (s.getPointsWorldX() - knight.getWorldX() + knight.screenX);
+                                    int posSlimeY = (int) (s.getPointsWorldY() - knight.getWorldY() + knight.screenY);
+                                    float dx = (posSlimeX + s.getSizeX()/2) - (knight.getScreenX() + knight.getSizeX()/2);
+                                    float dy = (posSlimeY + s.getSizeY()/2) - (knight.getScreenY() + knight.getSizeY()/2);
+                                    float dist = (float) Math.sqrt(dx * dx + dy * dy);
+                                    if (dist <= 150) {
+                                        s.takeDamage(2f);
+                                    }
                                 }
                             }
                         }
