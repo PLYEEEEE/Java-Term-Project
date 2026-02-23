@@ -13,7 +13,7 @@ import map.*;
 
 
 public class GamePanel extends JPanel implements Runnable {
-    private static final int FPS = 60;
+    private static final int FPS = 30;
     private Knight knight;
     private List<Slime> slimes;
     private Thread gameThread;
