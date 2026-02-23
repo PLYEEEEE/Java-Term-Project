@@ -61,17 +61,21 @@ public class GamePanel extends JPanel implements Runnable {
             public void keyPressed(KeyEvent e) {
 
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_W -> {up = true;knight.setMove(true);}
-                    case KeyEvent.VK_S -> {down = true;knight.setMove(true);}
+                    case KeyEvent.VK_W -> {
+                        up = true;knight.setMove(true);
+                    }
+                    case KeyEvent.VK_S -> {
+                        down = true;knight.setMove(true);
+                    }
                     case KeyEvent.VK_A -> {
-                        knight.setMove(true);
-                        left = true;
-                        knight.setFacing(-1);
+                            knight.setMove(true);
+                            left = true;
+                            knight.setFacing(-1);
                     }
                     case KeyEvent.VK_D -> {
-                        knight.setMove(true);
-                        right = true;
-                        knight.setFacing(1);
+                            knight.setMove(true);
+                            right = true;
+                            knight.setFacing(1);
                     }
                     case KeyEvent.VK_SPACE -> {
                         if (!knight.cooldownAttack) {
@@ -118,10 +122,26 @@ public class GamePanel extends JPanel implements Runnable {
             @Override
             public void keyReleased(KeyEvent e) {
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_W -> { up = false; knight.setMove(false);}
-                    case KeyEvent.VK_S -> {down = false; knight.setMove(false);}
-                    case KeyEvent.VK_A -> {left = false; knight.setMove(false);}
-                    case KeyEvent.VK_D -> {right = false; knight.setMove(false);}
+                    case KeyEvent.VK_W -> { up = false;
+                        if (!up&&!down&&!left&&!right){
+                            knight.setMove(false);
+                        }              
+                    }
+                    case KeyEvent.VK_S -> {down = false;
+                        if (!up&&!down&&!left&&!right){
+                            knight.setMove(false);
+                        }   
+                    }
+                    case KeyEvent.VK_A -> {left = false;
+                        if (!up&&!down&&!left&&!right){
+                            knight.setMove(false);
+                        }   
+                    }
+                    case KeyEvent.VK_D -> {right = false;
+                        if (!up&&!down&&!left&&!right){
+                            knight.setMove(false);
+                        }   
+                    }
                 }
             }
         });
@@ -266,12 +286,10 @@ public class GamePanel extends JPanel implements Runnable {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
-        //โหลดรูป
         try {
             Image imagegrass = ImageIO.read(getClass().getResourceAsStream("/Image/Terrain/Grass/Grass2.png"));
             g2.drawImage(imagegrass, 0, 0, sizeX, sizeY, null);
         } catch (IOException e) {
-    
             e.printStackTrace();
         }
         

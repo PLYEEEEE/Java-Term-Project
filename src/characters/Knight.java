@@ -34,7 +34,7 @@ public class Knight extends Character {
     private int facing = 1; // 1 = right, -1 = left
 
     public Knight(String name, int worldX, int worldY, int sizex, int sizey, int screenWidth, int screenHeight) {
-        super(name, 5, worldX, worldY, 3.0f, sizex, sizey);
+        super(name, 5, worldX, worldY, 4.0f, sizex, sizey);
         this.screenX = screenWidth / 2 - sizex / 2;
         this.screenY = screenHeight / 2 - sizey / 2;
         imageMove = new ImageCharacter[6];
@@ -131,8 +131,8 @@ public class Knight extends Character {
             int y = (int)(screenY - sizeY * 1.5);
             int width = (int)(sizeX * 2.5);
             int height = (int)(sizeY * 2.5);
-            int imgW = imageMove[idleCount].image.getWidth(null);
-            int imgH = imageMove[idleCount].image.getHeight(null);
+            int imgW = imageMove[moveCount].image.getWidth(null);
+            int imgH = imageMove[moveCount].image.getHeight(null);
 
             // ใช้การสลับ x1 (x+width) กับ x2 (x) เพื่อให้รูปกลับด้าน
             g2.drawImage(imageMove[moveCount].image, x + width, y, x, y + height, 0, 0, imgW, imgH, null);
