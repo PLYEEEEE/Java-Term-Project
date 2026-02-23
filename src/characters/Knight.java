@@ -11,10 +11,15 @@ public class Knight extends Character {
     public int screenX;
     public int screenY;
 
-    public boolean action = false;
+    private boolean action = false;
+    private boolean move = false;
     private ImageCharacter imageIdle[];
+    private ImageCharacter imageMove[];
+    private int moveCount = 0;
     private int idleCount = 0;
+    private int delayMunti = 4;
     private int delayAni = 0;
+
 
     private float attackRange = 150;
     private float skillRange = 300;
@@ -32,8 +37,10 @@ public class Knight extends Character {
         super(name, 5, worldX, worldY, 3.0f, sizex, sizey);
         this.screenX = screenWidth / 2 - sizex / 2;
         this.screenY = screenHeight / 2 - sizey / 2;
+        imageMove = new ImageCharacter[6];
         imageIdle = new ImageCharacter[5];
         loadImageIdle();
+        loadImageMove();
     }
 
     public void setFacing(int dir) {
@@ -44,6 +51,7 @@ public class Knight extends Character {
         if (!usingSkill & !attacking && !cooldownAttack) {
             cooldownAttack = true;
             attacking = true;
+            action = true;
             attackStart = System.currentTimeMillis();
         }
     }
@@ -51,6 +59,7 @@ public class Knight extends Character {
     public void useSkill() {
         if (!attacking && !usingSkill && !cooldownSkill) {
             cooldownSkill = true;
+            action = true;
             usingSkill = true;
             skillStart = System.currentTimeMillis();
         }
@@ -61,10 +70,12 @@ public class Knight extends Character {
 
         if (attacking && now - attackStart > 100) {
             attacking = false;
+            action = false;
         }
 
         if (usingSkill && now - skillStart > 400) {
             usingSkill = false;
+            action = false;
         }
         if(cooldownAttack&&now-attackStart>attackCooldown) {
             cooldownAttack = false;
@@ -76,9 +87,9 @@ public class Knight extends Character {
 
     public void draw(Graphics2D g2) {
         // ตัวละคร
-        if (action == false) {
+        if (!move && action == false && facing == 1) {
             g2.drawImage(imageIdle[idleCount].image,(int)(screenX-sizeX*3/4),(int)(screenY-sizeY*1.5),(int)(sizeX*2.5),(int)(sizeY*2.5), null);
-            if (delayAni == 3) {
+            if (delayAni == delayMunti) {
                 delayAni = -1;
                 idleCount++;
                 if (idleCount==5) {
@@ -86,8 +97,56 @@ public class Knight extends Character {
                 }
             }
             delayAni++;
-        }
+        } else if (!move && action == false && facing == -1) { // เมื่อหันซ้าย
+            int x = (int)(screenX - sizeX * 3 / 4);
+            int y = (int)(screenY - sizeY * 1.5);
+            int width = (int)(sizeX * 2.5);
+            int height = (int)(sizeY * 2.5);
+            int imgW = imageIdle[idleCount].image.getWidth(null);
+            int imgH = imageIdle[idleCount].image.getHeight(null);
 
+            // ใช้การสลับ x1 (x+width) กับ x2 (x) เพื่อให้รูปกลับด้าน
+            g2.drawImage(imageIdle[idleCount].image, x + width, y, x, y + height, 0, 0, imgW, imgH, null);
+
+            if (delayAni == delayMunti) {
+                delayAni = -1;
+                idleCount++;
+                if (idleCount == 5) {
+                    idleCount = 0;
+                }
+            }
+            delayAni++;
+        } else if(move && !action && facing == 1){
+            g2.drawImage(imageMove[moveCount].image,(int)(screenX-sizeX*3/4),(int)(screenY-sizeY*1.5),(int)(sizeX*2.5),(int)(sizeY*2.5), null);
+            if (delayAni == delayMunti) {
+                delayAni = -1;
+                moveCount++;
+                if (moveCount==6) {
+                    moveCount=0;
+                }
+            }
+            delayAni++;
+        } else if (move && action == false && facing == -1) { // เมื่อหันซ้าย
+            int x = (int)(screenX - sizeX * 3 / 4);
+            int y = (int)(screenY - sizeY * 1.5);
+            int width = (int)(sizeX * 2.5);
+            int height = (int)(sizeY * 2.5);
+            int imgW = imageMove[idleCount].image.getWidth(null);
+            int imgH = imageMove[idleCount].image.getHeight(null);
+
+            // ใช้การสลับ x1 (x+width) กับ x2 (x) เพื่อให้รูปกลับด้าน
+            g2.drawImage(imageMove[moveCount].image, x + width, y, x, y + height, 0, 0, imgW, imgH, null);
+
+            if (delayAni == delayMunti) {
+                delayAni = -1;
+                moveCount++;
+                if (moveCount == 6) {
+                    moveCount = 0;
+                }
+            }
+            delayAni++;
+        }
+      
         // โจมตีครึ่งวงกลม
         if (attacking) {
             g2.setColor(new Color(255, 0, 0, 120));
@@ -113,7 +172,6 @@ public class Knight extends Character {
                     (int)skillRange
             );
         }
-
 
         int barWidth = (int)450;
         int barHeight = 30;
@@ -186,6 +244,33 @@ public class Knight extends Character {
         }
     }
 
+    public void loadImageMove(){
+        try {
+            
+            imageMove[0] = new ImageCharacter();
+            imageMove[0].image = ImageIO.read(getClass().getResourceAsStream("/Image/Main_Character/MC/Moving/MCMoving1.png"));
+            
+            imageMove[1] = new ImageCharacter();
+            imageMove[1].image = ImageIO.read(getClass().getResourceAsStream("/Image/Main_Character/MC/Moving/MCMoving2.png"));
+
+            imageMove[2] = new ImageCharacter();
+            imageMove[2].image = ImageIO.read(getClass().getResourceAsStream("/Image/Main_Character/MC/Moving/MCMoving3.png"));
+
+            imageMove[3] = new ImageCharacter();
+            imageMove[3].image = ImageIO.read(getClass().getResourceAsStream("/Image/Main_Character/MC/Moving/MCMoving4.png"));
+
+            imageMove[4] = new ImageCharacter();
+            imageMove[4].image = ImageIO.read(getClass().getResourceAsStream("/Image/Main_Character/MC/Moving/MCMoving5.png"));
+
+            imageMove[5] = new ImageCharacter();
+            imageMove[5].image = ImageIO.read(getClass().getResourceAsStream("/Image/Main_Character/MC/Moving/MCMoving6.png"));
+            
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
     public void reset() {
         this.health = maxHealth;
     }
@@ -197,6 +282,25 @@ public class Knight extends Character {
         }
     }
     
+    public boolean getMove(){
+        return move;
+    }
+    public boolean getAction(){
+        return action;
+    }
+    public void setMove(boolean move){
+        this.move = move;
+    }
+    public void setAction(boolean action){
+        this.action = action;
+    }
+
+    public float getSkillRage(){
+        return skillRange;
+    }
+    public float getAttackRage(){
+        return attackRange;
+    }
     public float getSizeX() {
         return sizeX;
     }

@@ -61,13 +61,15 @@ public class GamePanel extends JPanel implements Runnable {
             public void keyPressed(KeyEvent e) {
 
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_W -> up = true;
-                    case KeyEvent.VK_S -> down = true;
+                    case KeyEvent.VK_W -> {up = true;knight.setMove(true);}
+                    case KeyEvent.VK_S -> {down = true;knight.setMove(true);}
                     case KeyEvent.VK_A -> {
+                        knight.setMove(true);
                         left = true;
                         knight.setFacing(-1);
                     }
                     case KeyEvent.VK_D -> {
+                        knight.setMove(true);
                         right = true;
                         knight.setFacing(1);
                     }
@@ -82,7 +84,7 @@ public class GamePanel extends JPanel implements Runnable {
                                     float dx = (posSlimeX + s.getSizeX()/2) - (knight.getScreenX() + knight.getSizeX()/2);
                                     float dy = (posSlimeY + s.getSizeY()/2) - (knight.getScreenY() + knight.getSizeY()/2);
                                     float dist = (float) Math.sqrt(dx * dx + dy * dy);
-                                    if (dist <= 75) {
+                                    if (dist <= knight.getAttackRage()/2) {
                                         s.takeDamage(1f);
                                     }
                                 }
@@ -103,7 +105,7 @@ public class GamePanel extends JPanel implements Runnable {
                                     float dx = (posSlimeX + s.getSizeX()/2) - (knight.getScreenX() + knight.getSizeX()/2);
                                     float dy = (posSlimeY + s.getSizeY()/2) - (knight.getScreenY() + knight.getSizeY()/2);
                                     float dist = (float) Math.sqrt(dx * dx + dy * dy);
-                                    if (dist <= 150) {
+                                    if (dist <= knight.getAttackRage()/2) {
                                         s.takeDamage(2f);
                                     }
                                 }
@@ -116,10 +118,10 @@ public class GamePanel extends JPanel implements Runnable {
             @Override
             public void keyReleased(KeyEvent e) {
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_W -> up = false;
-                    case KeyEvent.VK_S -> down = false;
-                    case KeyEvent.VK_A -> left = false;
-                    case KeyEvent.VK_D -> right = false;
+                    case KeyEvent.VK_W -> { up = false; knight.setMove(false);}
+                    case KeyEvent.VK_S -> {down = false; knight.setMove(false);}
+                    case KeyEvent.VK_A -> {left = false; knight.setMove(false);}
+                    case KeyEvent.VK_D -> {right = false; knight.setMove(false);}
                 }
             }
         });
