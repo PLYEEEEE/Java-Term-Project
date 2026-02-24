@@ -62,7 +62,7 @@ public class Slime {
     protected int pointsWorldX;
     protected int pointsWorldY;
     protected boolean isDead;
-    // 
+    protected int attackCooldown = 3000;
     private int iFrameDuration = 500;
     public boolean iFrame = false;
     public long iFrameStart;
@@ -193,6 +193,10 @@ public class Slime {
     }
     
     // ===== Getters =====
+
+    public int getAttackCooldown() {
+        return attackCooldown;
+    }
     
     public boolean isDead() {
         return isDead;

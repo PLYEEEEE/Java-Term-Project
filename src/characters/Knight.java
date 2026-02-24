@@ -1,16 +1,18 @@
 package characters;
 import java.awt.*;
 import java.io.IOException;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-public class Knight extends Character {
+import main.GamePanel;
 
+public class Knight extends Character {
+    private GamePanel gp;
     private int health = 10;
     private final int maxHealth = 10;
     public int screenX;
     public int screenY;
-
     private boolean action = false;
     private boolean move = false;
     private ImageCharacter imageIdle[];
@@ -19,8 +21,6 @@ public class Knight extends Character {
     private int idleCount = 0;
     private int delayMunti = 4;
     private int delayAni = 0;
-
-
     private float attackRange = 150;
     private float skillRange = 300;
     public boolean attacking = false;
@@ -36,10 +36,11 @@ public class Knight extends Character {
     public boolean iFrame = false;
     public long iFrameStart;
     
-    public Knight(String name, int worldX, int worldY, int sizex, int sizey, int screenWidth, int screenHeight) {
+    public Knight(String name, int worldX, int worldY, int sizex, int sizey, int screenWidth, int screenHeight,GamePanel gp) {
         super(name, 5, worldX, worldY, 4.0f, sizex, sizey);
         this.screenX = screenWidth / 2 - sizex / 2;
         this.screenY = screenHeight / 2 - sizey / 2;
+        this.gp = gp;
         imageMove = new ImageCharacter[6];
         imageIdle = new ImageCharacter[5];
         loadImageIdle();
@@ -281,6 +282,12 @@ public class Knight extends Character {
 
     public void reset() {
         this.health = maxHealth;
+        Random rand = new Random();
+        int randomNumberX = 2 + rand.nextInt(39); 
+        int randomNumberY = 2 + rand.nextInt(39);
+
+        worldX = (int) (randomNumberX*gp.gettileSizeX());
+        worldY = (int) (randomNumberY*gp.gettileSizeY());
     }
 
     public void takeDamage(int damage) {

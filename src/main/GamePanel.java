@@ -38,7 +38,7 @@ public class GamePanel extends JPanel implements Runnable {
         setBackground(Color.BLACK);
         setFocusable(true);
 
-        knight = new Knight("Knight", tileSizeX*spawnCharX, tileSizeY*spawnCharY, tileSizeX, tileSizeY,sizeX,sizeY);
+        knight = new Knight("Knight", tileSizeX*spawnCharX, tileSizeY*spawnCharY, tileSizeX, tileSizeY,sizeX,sizeY,this);
         tileManager = new TileManagerWorld(this , knight);
 
 
@@ -126,6 +126,7 @@ public class GamePanel extends JPanel implements Runnable {
         } else {
             // รีเซ็ตสถานะเกม
             knight.reset();
+            spawnSlime();
             isGameOver = false;
             isRunning = true;
             gameThread = new Thread(this);
@@ -173,7 +174,7 @@ public class GamePanel extends JPanel implements Runnable {
                 float dist = (float) Math.sqrt(dx * dx + dy * dy);
                 float collisionDistance = (s.getSizeX() + knight.getSizeX()) / 2;
                 if (dist <= collisionDistance) {
-                    if (now - s.getLastDamageTime() >= 5000) {
+                    if (now - s.getLastDamageTime() >= s.getAttackCooldown()) {
                         knight.takeDamage(2);
                         s.setLastDamageTime(now);
                     }
@@ -235,7 +236,9 @@ public class GamePanel extends JPanel implements Runnable {
 
         //  ให้ทุก slime วิ่งเข้าหา knight และไม่ซ้อน
         for (Slime s : slimes) {
-            if (s.isDead()) continue;
+            if (s.isDead()) {continue;
+
+            }
 
             int posSlimeX = (int) (s.getPointsWorldX() - knight.getWorldX() + knight.screenX);
             int posSlimeY = (int) (s.getPointsWorldY() - knight.getWorldY() + knight.screenY);
@@ -264,6 +267,17 @@ public class GamePanel extends JPanel implements Runnable {
             s.upDateIFrame();
         }
         
+        boolean allDead = true; 
+        for (Slime s : slimes) {
+            if (!s.isDead()) {
+                allDead = false;
+                break;
+            }
+        }
+
+        if (allDead) {
+            spawnSlime();
+        }
     }
 
     @Override
@@ -295,6 +309,22 @@ public class GamePanel extends JPanel implements Runnable {
             String msg = "GAME OVER";
             int msgWidth = g2.getFontMetrics().stringWidth(msg);
             g2.drawString(msg, (getWidth() - msgWidth) / 2, getHeight() / 2);
+        }
+    }
+
+    public void spawnSlime(){
+        slimes = new ArrayList<>();
+        Random rand = new Random();
+        int slimeCount = 3 + rand.nextInt(5); // 3-7 ตัว
+        for (int i = 0; i < slimeCount; i++) {
+            Slime s = new Slime( tileSizeX, tileSizeY);
+            // สุ่มตำแหน่ง ไม่ให้ซ้อนกับ Knight
+            int sx, sy;
+
+            sx = rand.nextInt(maxWorldCol - 5) * tileSizeX + tileSizeX*5;
+            sy = rand.nextInt(maxWorldRow - 5) * tileSizeY + tileSizeY*5;
+            s.setPointsWorldPosition(sx, sy);
+            slimes.add(s);
         }
     }
 
