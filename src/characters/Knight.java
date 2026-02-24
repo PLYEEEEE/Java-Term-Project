@@ -73,7 +73,7 @@ public class Knight extends Character {
             action = false;
         }
 
-        if (usingSkill && now - skillStart > 400) {
+        if (usingSkill && now - skillStart > 600) {
             usingSkill = false;
             action = false;
         }

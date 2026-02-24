@@ -13,15 +13,12 @@ public class Slime {
         private int sizeX;
         private int sizeY;
         
-        // ...existing code...
-
-        /**
-         * วาด Slime ลงบนหน้าจอ
-         */
         public void draw(Graphics2D g2,Knight knight) {
             if (isDead) return;
             g2.setColor(new Color(0, 200, 0));
-
+            if (iFrame) {
+                g2.setColor(Color.RED);
+            }
             int screenX = (int)(pointsWorldX - knight.getWorldX() + knight.screenX);
             int screenY = (int)(pointsWorldY - knight.getWorldY() + knight.screenY);
             g2.fillOval(screenX, screenY, sizeX, sizeY);
@@ -65,6 +62,17 @@ public class Slime {
     protected int pointsWorldX;
     protected int pointsWorldY;
     protected boolean isDead;
+    // 
+    private int iFrameDuration = 500;
+    public boolean iFrame = false;
+    public long iFrameStart;
+
+    public void upDateIFrame(){
+        long now = System.currentTimeMillis();
+        if (iFrame && now - iFrameStart >= iFrameDuration) {
+            iFrame = false;
+        }
+    }
     
     // Current wave number (for stat scaling)
     protected int currentWave;

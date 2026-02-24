@@ -80,40 +80,11 @@ public class GamePanel extends JPanel implements Runnable {
                     case KeyEvent.VK_SPACE -> {
                         if (!knight.cooldownAttack) {
                             knight.attack();
-                            // โจมตี: ลดเลือด slime 1 หน่วยถ้าอยู่ในพื้นที่โจมตี (รัศมี 150)
-                            for (Slime s : slimes) {
-                                if (!s.isDead()) {
-                                    int posSlimeX = (int) (s.getPointsWorldX() - knight.getWorldX() + knight.screenX);
-                                    int posSlimeY = (int) (s.getPointsWorldY() - knight.getWorldY() + knight.screenY);
-                                    float dx = (posSlimeX + s.getSizeX()/2) - (knight.getScreenX() + knight.getSizeX()/2);
-                                    float dy = (posSlimeY + s.getSizeY()/2) - (knight.getScreenY() + knight.getSizeY()/2);
-                                    float dist = (float) Math.sqrt(dx * dx + dy * dy);
-                                    if (dist <= knight.getAttackRage()/2) {
-                                        s.takeDamage(1f);
-                                    }
-                                }
-                            }
-                        }
-                        
-                        
-                        
+                        }                      
                     }
                     case KeyEvent.VK_Q -> {
                         if (!knight.cooldownSkill) {
                             knight.useSkill();
-                            // ใช้สกิล: ลดเลือด slime 2 หน่วยถ้าอยู่ในพื้นที่สกิล (รัศมี 300)
-                            for (Slime s : slimes) {
-                                if (!s.isDead()) {
-                                    int posSlimeX = (int) (s.getPointsWorldX() - knight.getWorldX() + knight.screenX);
-                                    int posSlimeY = (int) (s.getPointsWorldY() - knight.getWorldY() + knight.screenY);
-                                    float dx = (posSlimeX + s.getSizeX()/2) - (knight.getScreenX() + knight.getSizeX()/2);
-                                    float dy = (posSlimeY + s.getSizeY()/2) - (knight.getScreenY() + knight.getSizeY()/2);
-                                    float dist = (float) Math.sqrt(dx * dx + dy * dy);
-                                    if (dist <= knight.getAttackRage()/2) {
-                                        s.takeDamage(2f);
-                                    }
-                                }
-                            }
                         }
                     }
                 }
@@ -265,18 +236,33 @@ public class GamePanel extends JPanel implements Runnable {
 
         //  ให้ทุก slime วิ่งเข้าหา knight และไม่ซ้อน
         for (Slime s : slimes) {
-            if (s.isDead())
-                continue;
+            if (s.isDead()) continue;
+
             int posSlimeX = (int) (s.getPointsWorldX() - knight.getWorldX() + knight.screenX);
             int posSlimeY = (int) (s.getPointsWorldY() - knight.getWorldY() + knight.screenY);
             float dx = (posSlimeX + s.getSizeX() / 2) - (knight.getScreenX() + knight.getSizeX() / 2);
             float dy = (posSlimeY + s.getSizeY() / 2) - (knight.getScreenY() + knight.getSizeY() / 2);
             float dist = (float) Math.sqrt(dx * dx + dy * dy);
-            if (dist > knight.getSizeX()) {
+            if (dist > knight.getSizeX() && !s.iFrame) {
                 float moveX = (dx / dist) * s.getMoveSpeed();
                 float moveY = (dy / dist) * s.getMoveSpeed();
                 s.setPositionWorld((int)(s.getPointsWorldX() - moveX), (int)(s.getPointsWorldY() - moveY));
             }
+            if(knight.usingSkill){
+                if (!s.isDead()&&!s.iFrame&&dist <= knight.getSkillRage()/2) {
+                    s.iFrame = true;
+                    s.iFrameStart = System.currentTimeMillis();
+                    s.takeDamage(2f);
+                }          
+            }
+            if (knight.attacking&&!s.iFrame){
+                if (!s.isDead()&&!s.iFrame&&dist <= knight.getAttackRage()/2) {
+                    s.iFrame = true;
+                    s.iFrameStart = System.currentTimeMillis();
+                    s.takeDamage(1f);                    
+                } 
+            }
+            s.upDateIFrame();
         }
         
     }
