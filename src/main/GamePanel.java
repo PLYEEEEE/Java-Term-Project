@@ -172,7 +172,6 @@ public class GamePanel extends JPanel implements Runnable {
                 float dy = (posSlimeY + s.getSizeY() / 2) - (knight.getScreenY() + knight.getSizeY() / 2);
                 float dist = (float) Math.sqrt(dx * dx + dy * dy);
                 float collisionDistance = (s.getSizeX() + knight.getSizeX()) / 2;
-
                 if (dist <= collisionDistance) {
                     if (now - s.getLastDamageTime() >= 5000) {
                         knight.takeDamage(2);

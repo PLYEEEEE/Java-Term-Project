@@ -32,7 +32,10 @@ public class Knight extends Character {
     private long skillStart;
     private long skillCooldown = 10000;
     private int facing = 1; // 1 = right, -1 = left
-
+    private int iFrameDuration = 500;
+    public boolean iFrame = false;
+    public long iFrameStart;
+    
     public Knight(String name, int worldX, int worldY, int sizex, int sizey, int screenWidth, int screenHeight) {
         super(name, 5, worldX, worldY, 4.0f, sizex, sizey);
         this.screenX = screenWidth / 2 - sizex / 2;
@@ -42,6 +45,9 @@ public class Knight extends Character {
         loadImageIdle();
         loadImageMove();
     }
+
+    
+
 
     public void setFacing(int dir) {
         facing = dir;
@@ -72,7 +78,9 @@ public class Knight extends Character {
             attacking = false;
             action = false;
         }
-
+        if (iFrame && now - iFrameStart >= iFrameDuration) {
+            iFrame = false;
+        }
         if (usingSkill && now - skillStart > 600) {
             usingSkill = false;
             action = false;
@@ -181,6 +189,9 @@ public class Knight extends Character {
         g2.setColor(Color.black);
         g2.fillRect(barX, barY, barWidth, barHeight);
         g2.setColor(Color.GREEN);
+        if (iFrame) {
+            g2.setColor(Color.blue);
+        }
         g2.fillRect(barX + 1, barY + 1, (int)((barWidth - 2) * healthPercent), barHeight - 2);
         
         //ดูCoolDownSkill
@@ -277,6 +288,8 @@ public class Knight extends Character {
 
     public void takeDamage(int damage) {
         this.health -= damage;
+        this.iFrame = true;
+        iFrameStart = System.currentTimeMillis();
         if (this.health < 0) {
             this.health = 0;
         }
