@@ -46,9 +46,6 @@ public class Knight extends Character {
         loadImageMove();
     }
 
-    
-
-
     public void setFacing(int dir) {
         facing = dir;
     }
