@@ -72,6 +72,28 @@ public class Main {
             e.printStackTrace();
         }
 
+        // ปุ่มเพิ่มเสียง
+        SmartButton volUp = new SmartButton("", "src/Image/UI/Button2.png", 1100, 20, 100, 100);
+        volUp.addActionListener(e -> gamePanel.getBGM().volumeUp());
+        panel.add(volUp);
+        volUp.addActionListener(e -> {
+            gamePanel.getBGM().volumeUp();
+        });
+        panel.add(volUp);
+        volUp.addActionListener(e -> {
+            gamePanel.getBGM().volumeUp();
+        });
+        panel.add(volUp);
+
+        // ปุ่มลดเสียง
+        SmartButton volDown = new SmartButton("", "src/Image/UI/Button.png", 1180, 20, 100, 100);
+        volDown.addActionListener(e -> gamePanel.getBGM().volumeDown());
+        panel.add(volDown);
+        volDown.addActionListener(e -> {
+            gamePanel.getBGM().volumeDown();
+        });
+        panel.add(volDown);
+
         return panel;
     }
 

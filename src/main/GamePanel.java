@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import map.*;
+import soundbgm.Sound;
 
 
 public class GamePanel extends JPanel implements Runnable {
@@ -32,6 +33,11 @@ public class GamePanel extends JPanel implements Runnable {
     private int maxWorldRow = 42;
     private int spawnCharX = 22;
     private int spawnCharY = 9; 
+    private Sound bgm;
+
+    public Sound getBGM() {
+        return bgm;
+    }
 
     public GamePanel() {
         setPreferredSize(new Dimension(sizeX, sizeY));
@@ -41,6 +47,10 @@ public class GamePanel extends JPanel implements Runnable {
         knight = new Knight("Knight", tileSizeX*spawnCharX, tileSizeY*spawnCharY, tileSizeX, tileSizeY,sizeX,sizeY,this);
         tileManager = new TileManagerWorld(this , knight);
 
+        bgm = new Sound();
+        bgm.setFile("/res/BGM_01.wav");
+        bgm.play();
+        bgm.loop();
 
         // สุ่มจำนวน slime 3-7 ตัว
         slimes = new ArrayList<>();
@@ -119,6 +129,12 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void startGame() {
+        if (bgm == null) {
+            bgm = new Sound();
+            bgm.setFile("/res/BGM_01.wav");
+            bgm.play();
+            bgm.loop();
+    }
         if (gameThread == null) {
             gameThread = new Thread(this);
             isRunning = true;
@@ -187,6 +203,7 @@ public class GamePanel extends JPanel implements Runnable {
         if (knight.getHealth() <= 0 && !isGameOver) {
             isGameOver = true;
             isRunning = false;
+            bgm.stop(); 
             repaint();
             // หยุดเกมและแสดงหน้าจอ Game Over
             try {
@@ -197,6 +214,7 @@ public class GamePanel extends JPanel implements Runnable {
             // กลับไปที่เมนูหลัก
             isGameOver = false;
             Main main = new Main();
+            bgm.play();
             // หยุดเกมและปล่อยทรัพยากร
             main.gameOver();
         }
