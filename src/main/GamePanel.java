@@ -32,8 +32,9 @@ public class GamePanel extends JPanel implements Runnable {
     private int maxWorldCol = 42;
     private int maxWorldRow = 42;
     private int spawnCharX = 22;
-    private int spawnCharY = 9; 
+    private int currentWave = 1;
     private Sound bgm;
+    private int spawnCharY = 22;
 
     public Sound getBGM() {
         return bgm;
@@ -63,6 +64,8 @@ public class GamePanel extends JPanel implements Runnable {
             sx = rand.nextInt(maxWorldCol - 5) * tileSizeX + tileSizeX*5;
             sy = rand.nextInt(maxWorldRow - 5) * tileSizeY + tileSizeY*5;
             s.setPointsWorldPosition(sx, sy);
+            s.updateStatsForWave(currentWave);
+            s.setObserver(this); // ส่ง panel เป็น ImageObserver ให้ GIF animate
             slimes.add(s);
         }
 
@@ -141,6 +144,7 @@ public class GamePanel extends JPanel implements Runnable {
             gameThread.start();
         } else {
             // รีเซ็ตสถานะเกม
+            currentWave = 1;
             knight.reset();
             spawnSlime();
             isGameOver = false;
@@ -192,6 +196,7 @@ public class GamePanel extends JPanel implements Runnable {
                 if (dist <= collisionDistance) {
                     if (now - s.getLastDamageTime() >= s.getAttackCooldown()) {
                         knight.takeDamage(2);
+                        s.setState(Slime.State.ATTACKING); // trigger attack animation
                         s.setLastDamageTime(now);
                     }
                 }
@@ -263,11 +268,18 @@ public class GamePanel extends JPanel implements Runnable {
             float dx = (posSlimeX + s.getSizeX() / 2) - (knight.getScreenX() + knight.getSizeX() / 2);
             float dy = (posSlimeY + s.getSizeY() / 2) - (knight.getScreenY() + knight.getSizeY() / 2);
             float dist = (float) Math.sqrt(dx * dx + dy * dy);
+            boolean slimeMoved = false;
             if (dist > knight.getSizeX() && !s.iFrame) {
                 float moveX = (dx / dist) * s.getMoveSpeed();
                 float moveY = (dy / dist) * s.getMoveSpeed();
                 s.setPositionWorld((int)(s.getPointsWorldX() - moveX), (int)(s.getPointsWorldY() - moveY));
+                // กำหนดทิศที่ slime หันหน้าไป (ไปทางซ้ายหรือขวา)
+                s.setFacing(dx < 0 ? -1 : 1);
+                slimeMoved = true;
             }
+            // แจ้ง animation ว่า slime กำลังเดินหรือหยุด
+            s.notifyMoving(slimeMoved);
+
             if(knight.usingSkill){
                 if (!s.isDead()&&!s.iFrame&&dist <= knight.getSkillRage()/2) {
                     s.iFrame = true;
@@ -283,6 +295,8 @@ public class GamePanel extends JPanel implements Runnable {
                 } 
             }
             s.upDateIFrame();
+            // อัปเดต state machine ของ animation
+            s.updateState();
         }
         
         boolean allDead = true; 
@@ -294,6 +308,8 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
         if (allDead) {
+            System.out.println("All slimes dead, increasing wave to " + (currentWave + 1));
+            currentWave++;
             spawnSlime();
         }
     }
@@ -319,6 +335,17 @@ public class GamePanel extends JPanel implements Runnable {
         if (!isGameOver && knight.getHealth() > 0) {
             knight.draw(g2);
         }
+
+        System.out.println("Painting wave: " + currentWave);
+
+        // วาด Wave ที่มุมขวา
+        g2.setColor(Color.WHITE);
+        g2.setFont(new Font("Arial", Font.BOLD, 24));
+        String waveText = "Wave: " + currentWave;
+        int textX = sizeX - g2.getFontMetrics().stringWidth(waveText) - 10;
+        int textY = 30;
+        g2.drawString(waveText, textX, textY);
+
         if (isGameOver) {
             g2.setColor(new Color(0,0,0,180));
             g2.fillRect(0, 0, getWidth(), getHeight());
@@ -342,6 +369,8 @@ public class GamePanel extends JPanel implements Runnable {
             sx = rand.nextInt(maxWorldCol - 5) * tileSizeX + tileSizeX*5;
             sy = rand.nextInt(maxWorldRow - 5) * tileSizeY + tileSizeY*5;
             s.setPointsWorldPosition(sx, sy);
+            s.updateStatsForWave(currentWave);
+            s.setObserver(this); // ส่ง panel เป็น ImageObserver ให้ GIF animate
             slimes.add(s);
         }
     }
