@@ -336,13 +336,12 @@ public class GamePanel extends JPanel implements Runnable {
             knight.draw(g2);
         }
 
-        System.out.println("Painting wave: " + currentWave);
 
         // วาด Wave ที่มุมขวา
         g2.setColor(Color.WHITE);
         g2.setFont(new Font("Arial", Font.BOLD, 24));
         String waveText = "Wave: " + currentWave;
-        int textX = sizeX - g2.getFontMetrics().stringWidth(waveText) - 10;
+        int textX = sizeX - g2.getFontMetrics().stringWidth(waveText) - 20;
         int textY = 30;
         g2.drawString(waveText, textX, textY);
 

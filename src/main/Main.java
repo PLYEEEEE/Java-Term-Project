@@ -123,9 +123,9 @@ public class Main {
             String[] images = {"/Image/MenuImage&Font/mage.jpg", "/Image/MenuImage&Font/archer.jpg", "/Image/MenuImage&Font/knight.jpg"};
             // อัปเดตข้อมูลตามที่คุณแก้มาครับ
             String[] statsData = {
-                "Power: 18 | Speed: 4 | Magic: 20", 
                 "HP : 10 | Speed: 4 | Magic: 0", 
-                "Power: 22 | Speed: 6 | Magic: 2"
+                "HP : 10 | Speed: 4 | Magic: 0",
+                "HP : 10 | Speed: 4 | Magic: 0"
             };
             final int[] index = {2}; 
 

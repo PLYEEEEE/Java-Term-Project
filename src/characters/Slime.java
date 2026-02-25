@@ -60,7 +60,6 @@ public class Slime {
         if (url != null) {
             return new ImageIcon(url);
         }
-        System.err.println("[Slime] WARNING: could not load animation: " + path);
         return null;
     }
 
@@ -143,7 +142,7 @@ public class Slime {
             Image img = anim.getImage();
             Graphics2D g2d = (Graphics2D) g2.create();
 
-            if (facing < 0) {
+            if (facing > 0) {
                 // Flip horizontally
                 g2d.translate(screenX + sizeX, screenY);
                 g2d.scale(-1, 1);
