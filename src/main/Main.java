@@ -12,6 +12,7 @@ public class Main {
         JFrame window = new JFrame("Knight_Game");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setSize(1280, 720);
+        window.setResizable(false);
 
         gamePanel = new GamePanel(); 
         mainPanel.add(createMenuPanel(), "MenuScene");
@@ -115,12 +116,12 @@ public class Main {
             JLabel title = new JLabel("CHARACTER SELECT", SwingConstants.CENTER);
             title.setFont(baseFont.deriveFont(40f));
             title.setBackground(new Color(200, 200, 200, 220));
-            title.setForeground(Color.BLACK); 
+            title.setForeground(Color.white); 
             title.setBounds(240, 40, 800, 80);
             panel.add(title);
 
             String[] names = {"THE MAGE", "THE ARCHER", "THE KNIGHT"};
-            String[] images = {"/Image/MenuImage&Font/mage.jpg", "/Image/MenuImage&Font/archer.jpg", "/Image/MenuImage&Font/knight.jpg"};
+            String[] images = {"/Image/MenuImage&Font/mage.jpg", "/Image/MenuImage&Font/archer.jpg", "/Image/Main_Character/MC/Idle/MCIdle1.png"};
             // อัปเดตข้อมูลตามที่คุณแก้มาครับ
             String[] statsData = {
                 "HP : 10 | Speed: 4 | Magic: 0", 
@@ -155,7 +156,7 @@ public class Main {
                 nameBox.setText(names[index[0]]);
                 statsLabel.setText(statsData[index[0]]);
                 Image img = new ImageIcon(Main.class.getResource(images[index[0]])).getImage();
-                Image scaledImg = img.getScaledInstance(350, 500, Image.SCALE_SMOOTH);
+                Image scaledImg = img.getScaledInstance(350, 350, Image.SCALE_SMOOTH);
                 characterImage.setIcon(new ImageIcon(scaledImg));
             };
             updateCharacter.run();
